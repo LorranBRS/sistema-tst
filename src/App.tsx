@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import {
   AlertTriangle, Building2, Calculator, ClipboardCheck, FileWarning, GraduationCap, HardHat, LayoutDashboard, ListTodo, Menu,
-  MessagesSquare, PackageCheck, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
+  MessagesSquare, Moon, PackageCheck, Sun, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
 } from 'lucide-react'
 import { Link, ToastHost, useRota } from './components/ui'
 import { Pagina, PaginaDds, cfgAcoes, cfgAsos, cfgColaboradores, cfgEmpresas, cfgEntregas, cfgEpis, cfgOcorrencias, cfgTreinamentos } from './pages/cadastros'
@@ -178,6 +178,7 @@ export default function App() {
             ))}
           </select>
           <span className="spacer" />
+          <BotaoTema />
           <span className="esconde-mobile" style={{ fontSize: 14, color: 'var(--muted)' }}>
             {d.config.tecnico}
           </span>
@@ -199,4 +200,24 @@ function useTitulo(nome?: string) {
   useEffect(() => {
     document.title = nome ? `${nome} · Sistema TST` : 'Sistema TST'
   }, [nome])
+}
+
+/** Botão no topo que alterna entre tema claro e escuro (a escolha fica salva). */
+function BotaoTema() {
+  const d = useDB()
+  const [sistemaEscuro, setSistemaEscuro] = useState(() => window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false)
+  useEffect(() => {
+    const mq = window.matchMedia?.('(prefers-color-scheme: dark)')
+    if (!mq) return
+    const f = (e: MediaQueryListEvent) => setSistemaEscuro(e.matches)
+    mq.addEventListener('change', f)
+    return () => mq.removeEventListener('change', f)
+  }, [])
+  const escuro = d.config.tema === 'escuro' || (d.config.tema === 'auto' && sistemaEscuro)
+  const rotulo = escuro ? 'Mudar para tema claro' : 'Mudar para tema escuro'
+  return (
+    <button className="btn btn-icon btn-tema" onClick={() => db.configurar({ tema: escuro ? 'claro' : 'escuro' })} title={rotulo} aria-label={rotulo}>
+      {escuro ? <Sun size={19} /> : <Moon size={19} />}
+    </button>
+  )
 }

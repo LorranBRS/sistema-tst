@@ -347,3 +347,7 @@ a.stat:hover { text-decoration: none; border-color: var(--primary); }
   .card { box-shadow: none; }
   .so-impressao { display: block; }
 }
+
+/* Botão de tema no topo */
+.btn-tema { width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); }
+.btn-tema:hover { color: var(--text); }
