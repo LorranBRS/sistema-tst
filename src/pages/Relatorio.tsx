@@ -45,7 +45,8 @@ export default function Relatorio() {
   const diasSem = ultimoAcid ? diasAte(refDia) - diasAte(ultimoAcid.data) : null
 
   const insp = noMes(daEmpresa(d.inspecoes)).sort((a, b) => a.data.localeCompare(b.data))
-  const confs = insp.map((i) => resumo(i).conf).filter((c): c is number => c !== null)
+  // média só das inspeções concluídas (as em andamento aparecem na tabela, mas não entram no indicador)
+  const confs = insp.filter((i) => i.status === 'Concluída').map((i) => resumo(i).conf).filter((c): c is number => c !== null)
   const confMedia = confs.length ? Math.round(confs.reduce((s, c) => s + c, 0) / confs.length) : null
   const treinos = noMes(daEmpresa(d.treinamentos)).sort((a, b) => a.data.localeCompare(b.data))
   const horasTreino = treinos.reduce((s, t) => s + (Number(t.cargaHoraria) || 0), 0)
@@ -58,7 +59,7 @@ export default function Relatorio() {
   const atrasadas = acoesPend.filter((a) => a.quando < hoje())
   const pend = pendencias(d, colabs.map((c) => c.id))
 
-  const titulo = `${MESES[m - 1]} de ${ano}`
+  const titulo = `${MESES[m - 1].charAt(0).toUpperCase()}${MESES[m - 1].slice(1)} de ${ano}`
 
   return (
     <>
@@ -89,7 +90,7 @@ export default function Relatorio() {
 
       <div className="doc relatorio">
         <h2>RELATÓRIO MENSAL DE SEGURANÇA E SAÚDE NO TRABALHO</h2>
-        <div className="sub-doc" style={{ textTransform: 'capitalize' }}>{titulo}</div>
+        <div className="sub-doc">{titulo}</div>
         <div className="info">
           <div><b>Empresa:</b> {empresa?.nome ?? 'Todas as empresas'}</div>
           <div><b>CNPJ:</b> {empresa?.cnpj ?? '—'}</div>
@@ -105,7 +106,7 @@ export default function Relatorio() {
           <Kpi rotulo="Quase acidentes / incidentes" valor={ocorrMes.length - acidMes.length} />
           <Kpi rotulo="TF do mês" valor={isFinite(tf) ? fmtNum(tf, 2) : '—'} sub={`ano: ${isFinite(tfAno) ? fmtNum(tfAno, 2) : '—'}`} />
           <Kpi rotulo="TG do mês" valor={isFinite(tg) ? fmtNum(tg, 2) : '—'} sub={`ano: ${isFinite(tgAno) ? fmtNum(tgAno, 2) : '—'}`} />
-          <Kpi rotulo="Conformidade inspeções" valor={confMedia === null ? '—' : confMedia + '%'} sub={`${insp.length} inspeção(ões)`} />
+          <Kpi rotulo="Conformidade inspeções" valor={confMedia === null ? '—' : confMedia + '%'} sub={`${confs.length} concluída(s) de ${insp.length}`} />
           <Kpi rotulo="Horas de treinamento" valor={horasTreino} sub={`${treinos.length} capacitação(ões)`} />
         </div>
         <p className="nota">TF = acidentes com lesão × 1.000.000 ÷ HHT · TG = dias perdidos × 1.000.000 ÷ HHT (NBR 14280). HHT estimada: {colabs.length} pessoas × {horas || 0} h.</p>
@@ -128,11 +129,11 @@ export default function Relatorio() {
         <h4 className="secao-doc">3. Inspeções</h4>
         {insp.length ? (
           <table>
-            <thead><tr><th>Data</th><th>Checklist</th><th>Local</th><th>Conformidade</th><th>Não conformidades</th></tr></thead>
+            <thead><tr><th>Data</th><th>Checklist</th><th>Local</th><th>Conformidade</th><th>Não conformidades</th><th>Status</th></tr></thead>
             <tbody>
               {insp.map((i) => {
                 const r = resumo(i)
-                return <tr key={i.id}><td>{fmtData(i.data)}</td><td>{i.titulo}</td><td>{i.local}</td><td>{r.conf === null ? '—' : r.conf + '%'}</td><td>{r.nc}</td></tr>
+                return <tr key={i.id}><td>{fmtData(i.data)}</td><td>{i.titulo}</td><td>{i.local}</td><td>{r.conf === null ? '—' : r.conf + '%'}</td><td>{r.nc}</td><td>{i.status}</td></tr>
               })}
             </tbody>
           </table>
