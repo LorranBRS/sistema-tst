@@ -29,6 +29,10 @@ SaaS web para o dia a dia do **Técnico de Segurança do Trabalho**: EPIs, trein
 
 Todas as listas têm busca, filtros e **exportação CSV** (abre direto no Excel).
 
+## Tela de apresentação
+
+A página de apresentação com recursos e planos (`src/pages/Landing.tsx`) está **desativada**: o endereço abre direto no painel. Para reativar, mude `MOSTRAR_APRESENTACAO` para `true` em [`src/App.tsx`](src/App.tsx).
+
 ## Tecnologia
 
 - React 19 + TypeScript + Vite
@@ -54,7 +58,7 @@ src/
   pages/        painel, inspeções, APR, ficha de EPI, calculadoras, NRs, configurações, landing
 ```
 
-## Roadmap (planos pagos)
+## Roadmap
 
 - Login e sincronização na nuvem (multiusuário)
 - Assinatura digital do colaborador na entrega de EPI

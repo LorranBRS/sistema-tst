@@ -13,6 +13,10 @@ import Calculadoras from './pages/Calculadoras'
 import Nrs from './pages/Nrs'
 import Configuracoes from './pages/Configuracoes'
 import Landing from './pages/Landing'
+
+// Tela de apresentação (landing com recursos e planos) DESATIVADA: o sistema abre direto no painel.
+// Para reativar, troque para true — o arquivo src/pages/Landing.tsx foi mantido.
+const MOSTRAR_APRESENTACAO = false
 import { db, daEmpresaAtiva, useDB } from './lib/store'
 import { diasAte, situacao } from './lib/utils'
 import type { DB } from './lib/types'
@@ -118,7 +122,7 @@ export default function App() {
     setMenuAberto(false)
   }, [rota])
 
-  const emApp = rota.startsWith('/app')
+  const emApp = rota.startsWith('/app') || !MOSTRAR_APRESENTACAO
   const { ativo, conteudo } = emApp ? resolverPagina(rota) : { ativo: '', conteudo: null }
   const atual = MENU.flatMap((g) => g.itens).find((i) => i.rota === ativo)
   useTitulo(atual?.nome)
@@ -128,7 +132,7 @@ export default function App() {
   return (
     <div className={'shell' + (menuAberto ? ' menu-aberto' : '')} onClick={(e) => menuAberto && e.target === e.currentTarget && setMenuAberto(false)}>
       <aside className="sidebar" aria-label="Menu principal">
-        <Link to="/" className="brand">
+        <Link to={MOSTRAR_APRESENTACAO ? '/' : '/app'} className="brand">
           <span className="brand-logo">
             <ShieldCheck size={20} />
           </span>
