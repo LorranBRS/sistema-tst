@@ -77,6 +77,50 @@ export interface Ocorrencia {
   descricao: string
   cat: string
   status: string
+  investigacao?: Investigacao
+}
+
+export interface Investigacao {
+  dataInicio: string
+  equipe: string
+  testemunhas: string
+  sequencia: string // como aconteceu
+  porques: string[] // 5 porquês
+  causas: Record<string, string> // categorias (6M): Método, Mão de obra, Máquina, Material, Meio ambiente, Medição
+  causaRaiz: string
+  conclusao: string
+  acoesGeradas?: boolean
+  concluida?: boolean
+}
+
+export interface ItemPt {
+  texto: string
+  resposta: 'S' | 'N' | 'NA' | ''
+}
+
+export interface Pt {
+  id: ID
+  empresaId: ID
+  numero: string
+  tipo: string
+  atividade: string
+  local: string
+  data: string
+  horaInicio: string
+  horaFim: string
+  executantes: string
+  emitente: string
+  aprNumero: string
+  checklist: ItemPt[]
+  medicoes: { o2: string; lel: string; h2s: string; co: string }
+  observacoes: string
+  status: 'Aberta' | 'Encerrada' | 'Cancelada'
+}
+
+export interface Requisito {
+  id: ID
+  funcao: string
+  cursos: string[]
 }
 
 export interface Acao {
@@ -171,6 +215,8 @@ export interface DB {
   dds: Dds[]
   inspecoes: Inspecao[]
   aprs: Apr[]
+  pts: Pt[]
+  requisitos: Requisito[]
   config: Config
 }
 

@@ -1,5 +1,6 @@
 // Configuração dos módulos de cadastro que usam a página genérica (CrudPage).
-import { FileText, Lightbulb } from 'lucide-react'
+import { FileSearch, FileText, Lightbulb } from 'lucide-react'
+import { BotaoImportarColaboradores } from '../components/ImportarColaboradores'
 import { CrudPage, type CrudConfig, type Reg } from '../components/CrudPage'
 import { BadgeStatus, Link, Validade } from '../components/ui'
 import { CURSOS, GRAVIDADES, MOTIVOS_ENTREGA, TEMAS_DDS, TIPOS_ASO, TIPOS_OCORRENCIA } from '../lib/catalogos'
@@ -99,6 +100,7 @@ export const cfgColaboradores: CrudConfig = {
     { rotulo: 'Com pendências', teste: (r, d) => pendencias(r.id, d) > 0 },
   ],
   ordenar: (a, b) => a.nome.localeCompare(b.nome),
+  botoesExtras: <BotaoImportarColaboradores />,
   acoesExtras: (r) => (
     <Link to={'/app/ficha-epi/' + r.id} className="btn btn-sm" >
       <FileText size={14} /> Ficha EPI
@@ -309,6 +311,11 @@ export const cfgOcorrencias: CrudConfig = {
     { rotulo: 'Em investigação', teste: (r) => r.status === 'Em investigação' },
   ],
   ordenar: porData('data'),
+  acoesExtras: (r) => (
+    <Link to={'/app/investigacao/' + r.id} className="btn btn-sm">
+      <FileSearch size={14} /> {r.investigacao?.concluida ? 'Investigação' : r.investigacao ? 'Continuar' : 'Investigar'}
+    </Link>
+  ),
 }
 
 /* ---------- Plano de ação (5W2H) ---------- */

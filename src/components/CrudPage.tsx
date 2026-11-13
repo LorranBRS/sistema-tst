@@ -51,6 +51,8 @@ export interface CrudConfig {
   ordenar?: (a: Reg, b: Reg) => number
   acoesExtras?: (r: Reg, d: DB) => ReactNode
   cabecalhoExtra?: ReactNode
+  /** botões extras ao lado de "Exportar CSV" */
+  botoesExtras?: ReactNode
 }
 
 function rotuloRef(d: DB, col: 'empresas' | 'colaboradores' | 'epis', r: Reg) {
@@ -99,6 +101,7 @@ export function CrudPage({ cfg }: { cfg: CrudConfig }) {
   return (
     <>
       <PageHead titulo={cfg.titulo} sub={cfg.sub}>
+        {cfg.botoesExtras}
         <button className="btn" onClick={exportar} disabled={!lista.length}>
           <Download size={16} /> Exportar CSV
         </button>

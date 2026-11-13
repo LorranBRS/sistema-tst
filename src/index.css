@@ -351,3 +351,18 @@ a.stat:hover { text-decoration: none; border-color: var(--primary); }
 /* Botão de tema no topo */
 .btn-tema { width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; color: var(--muted); }
 .btn-tema:hover { color: var(--text); }
+
+/* Relatório mensal */
+.doc .secao-doc { font-size: 14px; margin: 22px 0 8px; padding-bottom: 4px; border-bottom: 2px solid #15803d; color: #14532d; }
+.doc .kpis-doc { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 8px 0; }
+.doc .kpi-doc { border: 1px solid #cfd8d3; border-radius: 8px; padding: 8px 10px; background: #f6faf7; }
+.doc .kpi-doc .r { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: .03em; }
+.doc .kpi-doc .v { font-size: 20px; font-weight: 800; color: #111; }
+.doc .kpi-doc .s { font-size: 11px; color: #666; }
+.doc .vazio-doc { font-size: 12.5px; color: #666; font-style: italic; margin: 6px 0; }
+.doc .nota { color: #666; }
+@media (max-width: 700px) { .doc .kpis-doc { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media print {
+  .doc .secao-doc, .doc table, .doc .kpis-doc { break-inside: avoid; }
+  .doc .kpi-doc, .doc th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

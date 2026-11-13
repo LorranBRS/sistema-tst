@@ -1,13 +1,17 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import {
   AlertTriangle, Building2, Calculator, ClipboardCheck, FileWarning, GraduationCap, HardHat, LayoutDashboard, ListTodo, Menu,
-  MessagesSquare, Moon, PackageCheck, Sun, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
+  MessagesSquare, Moon, FileBarChart, FileCheck2, Grid3x3, PackageCheck, Sun, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
 } from 'lucide-react'
 import { Link, ToastHost, useRota } from './components/ui'
 import { Pagina, PaginaDds, cfgAcoes, cfgAsos, cfgColaboradores, cfgEmpresas, cfgEntregas, cfgEpis, cfgOcorrencias, cfgTreinamentos } from './pages/cadastros'
 import Painel from './pages/Painel'
 import Inspecoes, { ExecutarInspecao } from './pages/Inspecoes'
 import Aprs, { EditarApr } from './pages/Apr'
+import Pts, { EditarPt } from './pages/Pts'
+import Investigacao from './pages/Investigacao'
+import Matriz, { pendenciasMatriz } from './pages/Matriz'
+import Relatorio from './pages/Relatorio'
 import FichaEpi from './pages/FichaEpi'
 import Calculadoras from './pages/Calculadoras'
 import Nrs from './pages/Nrs'
@@ -53,6 +57,7 @@ const MENU: { grupo: string; itens: ItemMenu[] }[] = [
       { rota: '/app/epis', nome: 'EPIs e estoque', icone: <HardHat size={18} />, pagina: () => <Epis />, contador: (d) => d.epis.filter((e) => situacao(e.validadeCa, d.config.alertaDias) === 'vencido').length },
       { rota: '/app/entregas', nome: 'Entregas de EPI', icone: <PackageCheck size={18} />, pagina: () => <Entregas /> },
       { rota: '/app/treinamentos', nome: 'Treinamentos', icone: <GraduationCap size={18} />, pagina: () => <Treinamentos />, contador: (d) => contarVencidosUltimos(d, 'treinamentos') },
+      { rota: '/app/matriz', nome: 'Matriz de treinamentos', icone: <Grid3x3 size={18} />, pagina: () => <Matriz />, contador: (d) => pendenciasMatriz(d) },
       { rota: '/app/asos', nome: 'ASOs e exames', icone: <Stethoscope size={18} />, pagina: () => <Asos />, contador: (d) => contarVencidosUltimos(d, 'asos') },
     ],
   },
@@ -61,6 +66,7 @@ const MENU: { grupo: string; itens: ItemMenu[] }[] = [
     itens: [
       { rota: '/app/inspecoes', nome: 'Inspeções', icone: <ClipboardCheck size={18} />, pagina: () => <Inspecoes /> },
       { rota: '/app/apr', nome: 'APR', icone: <FileWarning size={18} />, pagina: () => <Aprs /> },
+      { rota: '/app/pt', nome: 'Permissão de trabalho', icone: <FileCheck2 size={18} />, pagina: () => <Pts /> },
       { rota: '/app/dds', nome: 'DDS', icone: <MessagesSquare size={18} />, pagina: () => <PaginaDds /> },
     ],
   },
@@ -69,6 +75,7 @@ const MENU: { grupo: string; itens: ItemMenu[] }[] = [
     itens: [
       { rota: '/app/ocorrencias', nome: 'Ocorrências', icone: <AlertTriangle size={18} />, pagina: () => <Ocorrencias /> },
       { rota: '/app/acoes', nome: 'Plano de ação', icone: <ListTodo size={18} />, pagina: () => <Acoes />, contador: (d) => daEmpresaAtiva(d, d.acoes).filter((a) => a.status !== 'Concluída' && diasAte(a.quando) < 0).length },
+      { rota: '/app/relatorios', nome: 'Relatório mensal', icone: <FileBarChart size={18} />, pagina: () => <Relatorio /> },
     ],
   },
   {
@@ -98,6 +105,8 @@ function resolverPagina(rota: string): { ativo: string; conteudo: ReactNode } {
   const partes = rota.split('/').filter(Boolean) // ['app', 'inspecoes', 'id']
   if (partes[1] === 'inspecoes' && partes[2]) return { ativo: '/app/inspecoes', conteudo: <ExecutarInspecao id={partes[2]} /> }
   if (partes[1] === 'apr' && partes[2]) return { ativo: '/app/apr', conteudo: <EditarApr id={partes[2]} /> }
+  if (partes[1] === 'pt' && partes[2]) return { ativo: '/app/pt', conteudo: <EditarPt id={partes[2]} /> }
+  if (partes[1] === 'investigacao' && partes[2]) return { ativo: '/app/ocorrencias', conteudo: <Investigacao id={partes[2]} /> }
   if (partes[1] === 'ficha-epi' && partes[2]) return { ativo: '/app/colaboradores', conteudo: <FichaEpi id={partes[2]} /> }
   const base = '/' + partes.slice(0, 2).join('/')
   for (const g of MENU) for (const i of g.itens) if (i.rota === base) return { ativo: i.rota, conteudo: i.pagina() }
@@ -155,7 +164,7 @@ export default function App() {
             })}
           </nav>
         ))}
-        <div className="sidebar-foot">Dados salvos neste navegador · v1.0</div>
+        <div className="sidebar-foot">Dados salvos neste navegador · v1.1</div>
       </aside>
       {menuAberto && <div onClick={() => setMenuAberto(false)} style={{ position: 'fixed', inset: 0, zIndex: 55 }} />}
       <div className="main">

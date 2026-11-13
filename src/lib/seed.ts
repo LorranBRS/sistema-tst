@@ -1,8 +1,8 @@
 // Dados de demonstração (fictícios). As datas são relativas a hoje,
 // para o painel sempre mostrar vencimentos e alertas realistas.
-import type { DB, Config } from './types'
+import type { DB, Config, Ocorrencia } from './types'
 import { addDias, addMeses, hoje } from './utils'
-import { MODELOS_INSPECAO } from './catalogos'
+import { MODELOS_INSPECAO, TIPOS_PT } from './catalogos'
 
 export const configPadrao = (): Config => ({
   tecnico: 'Técnico(a) de Segurança',
@@ -26,6 +26,8 @@ export const dbVazio = (): DB => ({
   dds: [],
   inspecoes: [],
   aprs: [],
+  pts: [],
+  requisitos: [],
   config: configPadrao(),
 })
 
@@ -100,7 +102,7 @@ export function dbDemo(): DB {
     aso('a7', 'c8', 'Periódico', -30), aso('a8', 'c9', 'Admissional', -320), aso('a9', 'c10', 'Admissional', -60),
   ]
 
-  const ocorrencias = [
+  const ocorrencias: Ocorrencia[] = [
     { id: 'o1', empresaId: 'e2', colaboradorId: 'c7', data: d(-240), tipo: 'Acidente típico', gravidade: 'Com afastamento', diasPerdidos: 12, local: 'Estamparia – prensa 3', parteCorpo: 'Mão esquerda', descricao: 'Corte na mão ao retirar peça da matriz.', cat: '2026.000123-4', status: 'Concluída' },
     { id: 'o2', empresaId: 'e1', colaboradorId: 'c3', data: d(-150), tipo: 'Quase acidente', gravidade: 'Sem lesão', diasPerdidos: 0, local: 'Bloco B – 3º pavimento', parteCorpo: '', descricao: 'Queda de tábua do andaime em área não isolada.', cat: '', status: 'Concluída' },
     { id: 'o3', empresaId: 'e1', colaboradorId: 'c4', data: d(-95), tipo: 'Acidente típico', gravidade: 'Sem afastamento', diasPerdidos: 0, local: 'Central de armação', parteCorpo: 'Antebraço direito', descricao: 'Escoriação ao manusear vergalhão sem luva.', cat: '2026.000456-7', status: 'Concluída' },
@@ -148,8 +150,55 @@ export function dbDemo(): DB {
     },
   ]
 
+  // Investigação de exemplo no acidente da prensa
+  ocorrencias[0] = {
+    ...ocorrencias[0],
+    investigacao: {
+      dataInicio: d(-239),
+      equipe: 'Técnico de segurança, supervisor da estamparia, membro da CIPA',
+      testemunhas: 'Operador da prensa 2',
+      sequencia: 'Durante a retirada manual de uma peça presa na matriz, a operadora acionou o pedal com a mão ainda na área de prensagem.',
+      porques: [
+        'Por que a mão estava na área de prensagem? Para retirar uma peça presa na matriz.',
+        'Por que a peça ficou presa? A matriz estava com rebarba acumulada.',
+        'Por que havia rebarba? A limpeza da matriz não estava no plano de manutenção.',
+        'Por que a prensa acionou com a mão na área? Não havia cortina de luz nem comando bimanual.',
+        'Por que não havia proteção? A máquina não passou por apreciação de risco (NR-12).',
+      ],
+      causas: {
+        'Método': 'Retirada de peça sem procedimento e sem ferramenta auxiliar',
+        'Máquina': 'Prensa sem cortina de luz / comando bimanual',
+        'Mão de obra': 'Treinamento NR-12 sem prática de situações anormais',
+      },
+      causaRaiz: 'Prensa sem dispositivos de segurança previstos na NR-12 e ausência de procedimento para destravamento de peças.',
+      conclusao: 'Acidente evitável. Instalar proteções e criar procedimento de bloqueio antes de qualquer intervenção na matriz.',
+      acoesGeradas: true,
+      concluida: true,
+    },
+  }
+
+  const modeloPt = TIPOS_PT.find((t) => t.tipo === 'Trabalho em altura')!
+  const pts = [
+    {
+      id: 'pt1', empresaId: 'e1', numero: 'PT-001', tipo: modeloPt.tipo, atividade: 'Montagem de andaime fachadeiro', local: 'Fachada norte – bloco B',
+      data: d(-2), horaInicio: '07:30', horaFim: '17:00', executantes: 'Luciana Ferreira, Rafael Martins', emitente: 'Técnico de segurança', aprNumero: 'APR-001',
+      checklist: modeloPt.itens.map((texto) => ({ texto, resposta: 'S' as const })), medicoes: { o2: '', lel: '', h2s: '', co: '' }, observacoes: '', status: 'Encerrada' as const,
+    },
+  ]
+
+  const requisitos = [
+    { id: 'rq1', funcao: 'Eletricista', cursos: ['NR-10 Básico', 'NR-35 Trabalho em altura'] },
+    { id: 'rq2', funcao: 'Armador', cursos: ['NR-18 Admissional (construção)', 'NR-35 Trabalho em altura'] },
+    { id: 'rq3', funcao: 'Montadora de andaimes', cursos: ['NR-18 Admissional (construção)', 'NR-35 Trabalho em altura'] },
+    { id: 'rq4', funcao: 'Pedreiro', cursos: ['NR-18 Admissional (construção)'] },
+    { id: 'rq5', funcao: 'Operador de empilhadeira', cursos: ['NR-11 Operador de empilhadeira'] },
+    { id: 'rq6', funcao: 'Operadora de prensa', cursos: ['NR-12 Máquinas e equipamentos'] },
+    { id: 'rq7', funcao: 'Mecânica de manutenção', cursos: ['NR-10 Básico', 'NR-12 Máquinas e equipamentos', 'NR-33 Espaço confinado (autorizado/vigia)'] },
+    { id: 'rq8', funcao: 'Soldador', cursos: ['NR-23 Brigada de incêndio', 'NR-12 Máquinas e equipamentos'] },
+  ]
+
   return {
-    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs,
+    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs, pts, requisitos,
     config: { ...configPadrao(), tecnico: 'Técnico(a) de Segurança (demo)' },
   }
 }

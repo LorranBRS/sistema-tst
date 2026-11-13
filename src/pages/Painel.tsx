@@ -2,6 +2,7 @@ import { AlertTriangle, ClipboardCheck, GraduationCap, HardHat, ListTodo, Stetho
 import { BadgeSituacao, Link, PageHead, Stat } from '../components/ui'
 import { TIPOS_ACIDENTE } from '../lib/catalogos'
 import { daEmpresaAtiva, nomes, useDB } from '../lib/store'
+import { pendenciasMatriz } from './Matriz'
 import { addMeses, diasAte, fmtData, hoje, MESES_CURTOS, situacao, textoPrazo } from '../lib/utils'
 
 interface Vencimento {
@@ -31,6 +32,7 @@ export default function Painel() {
     aVencer: l.filter((x) => situacao(campo(x), alerta) === 'avencer').length,
   })
   const tr = contar(treinos, (t) => t.validade)
+  const faltaMatriz = pendenciasMatriz(d)
   const as = contar(asos, (a) => a.validade)
   const caProb = d.epis.filter((e) => situacao(e.validadeCa, alerta) !== 'ok').length
   const estoqueBaixo = d.epis.filter((e) => e.estoque <= e.estoqueMinimo).length
@@ -87,7 +89,7 @@ export default function Painel() {
       </div>
 
       <div className="grid grid-4" style={{ marginBottom: 16 }}>
-        <Stat rotulo="Treinamentos" valor={tr.vencidos} detalhe={<><b style={{ color: 'var(--danger)' }}>vencidos</b> · {tr.aVencer} a vencer</>} icone={<GraduationCap size={16} />} tom={tr.vencidos ? 'danger' : undefined} to="/app/treinamentos" />
+        <Stat rotulo="Treinamentos" valor={tr.vencidos} detalhe={<><b style={{ color: 'var(--danger)' }}>vencidos</b> · {tr.aVencer} a vencer{faltaMatriz ? ` · ${faltaMatriz} pendente(s) na matriz` : ''}</>} icone={<GraduationCap size={16} />} tom={tr.vencidos ? 'danger' : undefined} to="/app/treinamentos" />
         <Stat rotulo="ASOs" valor={as.vencidos} detalhe={<><b style={{ color: 'var(--danger)' }}>vencidos</b> · {as.aVencer} a vencer</>} icone={<Stethoscope size={16} />} tom={as.vencidos ? 'danger' : undefined} to="/app/asos" />
         <Stat rotulo="EPIs com alerta" valor={caProb + estoqueBaixo} detalhe={`${caProb} CA vencendo · ${estoqueBaixo} estoque baixo`} icone={<HardHat size={16} />} tom={caProb + estoqueBaixo ? 'warn' : undefined} to="/app/epis" />
         <Stat rotulo="Ações pendentes" valor={acoesAbertas.length} detalhe={<><b style={{ color: atrasadas.length ? 'var(--danger)' : undefined }}>{atrasadas.length} atrasada(s)</b></>} icone={<ListTodo size={16} />} tom={atrasadas.length ? 'danger' : 'info'} to="/app/acoes" />

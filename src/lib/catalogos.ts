@@ -232,3 +232,89 @@ export function nivelRisco(p: number, s: number) {
   if (v >= 5) return { valor: v, nome: 'Moderado', cls: 'moderado' }
   return { valor: v, nome: 'Baixo', cls: 'baixo' }
 }
+
+/* ---------- Permissão de Trabalho ---------- */
+export const TIPOS_PT: { tipo: string; nr: string; medicoes?: boolean; itens: string[] }[] = [
+  {
+    tipo: 'Trabalho em altura',
+    nr: 'NR-35',
+    itens: [
+      'APR da atividade realizada e divulgada à equipe',
+      'Trabalhadores capacitados (NR-35) e com ASO apto para altura',
+      'Cinturão paraquedista e talabarte inspecionados',
+      'Ponto de ancoragem / linha de vida definido e adequado',
+      'Área abaixo isolada e sinalizada',
+      'Plano de resgate e equipe de resgate disponíveis',
+      'Condições climáticas favoráveis (sem chuva forte ou vento)',
+      'Escada, andaime ou PTA inspecionados',
+      'Ferramentas e materiais presos contra queda',
+    ],
+  },
+  {
+    tipo: 'Trabalho a quente',
+    nr: 'NR-18 / NR-20',
+    itens: [
+      'Materiais combustíveis removidos ou protegidos ao redor',
+      'Atmosfera verificada: ausência de gases ou vapores inflamáveis',
+      'Extintor adequado posicionado no local',
+      'Vigia de fogo designado durante e após o serviço',
+      'Equipamento de solda/corte inspecionado (cabos, mangueiras, válvulas corta-chama)',
+      'Biombos ou anteparos instalados para proteger terceiros',
+      'EPIs de soldador em uso (máscara, avental, luvas, perneiras)',
+      'Ronda no local após o término do serviço',
+    ],
+  },
+  {
+    tipo: 'Espaço confinado',
+    nr: 'NR-33',
+    medicoes: true,
+    itens: [
+      'Espaço confinado identificado e sinalizado',
+      'Supervisor de entrada, vigia e trabalhadores autorizados capacitados',
+      'ASO apto para trabalho em espaço confinado',
+      'Bloqueio e etiquetagem de energias, fluidos e agitadores',
+      'Ventilação / exaustão adequada instalada',
+      'Medição de gases antes da entrada e monitoramento contínuo',
+      'Comunicação definida entre vigia e entrantes',
+      'Equipamentos de resgate disponíveis no local (tripé, guincho)',
+      'Iluminação e equipamentos adequados à atmosfera (à prova de explosão, se necessário)',
+    ],
+  },
+  {
+    tipo: 'Serviço em eletricidade',
+    nr: 'NR-10',
+    itens: [
+      'Trabalhadores autorizados conforme NR-10',
+      'Seccionamento do circuito',
+      'Impedimento de reenergização (bloqueio e etiquetagem)',
+      'Constatação da ausência de tensão',
+      'Aterramento temporário com equipotencialização',
+      'Proteção dos elementos energizados na zona controlada',
+      'Sinalização de impedimento de reenergização',
+      'Ferramentas isoladas, EPIs e vestimenta adequados',
+    ],
+  },
+  {
+    tipo: 'Escavação',
+    nr: 'NR-18',
+    itens: [
+      'Interferências subterrâneas identificadas (redes, cabos, tubulações)',
+      'Escoramento ou talude conforme projeto',
+      'Material escavado afastado da borda',
+      'Acesso seguro por escada ou rampa',
+      'Bordas sinalizadas e com barreiras',
+      'Inspeção da vala antes de cada jornada',
+    ],
+  },
+]
+
+/** Faixas de referência para medição de gases (espaço confinado). */
+export const REF_GASES = {
+  o2: 'O₂ entre 19,5% e 23,0%',
+  lel: 'Inflamáveis abaixo de 10% do LIE',
+  h2s: 'H₂S até 8 ppm (LT NR-15)',
+  co: 'CO até 39 ppm (LT NR-15)',
+}
+
+/* ---------- Investigação de acidentes ---------- */
+export const CATEGORIAS_6M = ['Método', 'Mão de obra', 'Máquina', 'Material', 'Meio ambiente', 'Medição']

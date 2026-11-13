@@ -14,6 +14,14 @@ function carregar(): DB {
     if (bruto) {
       const dados = JSON.parse(bruto)
       const base = dbVazio()
+      // Migração da v1.0: quem ainda usa os dados de demonstração ganha os exemplos dos módulos novos
+      if (dados.requisitos === undefined && Array.isArray(dados.empresas) && dados.empresas.some((e: { id: string }) => e.id === 'e1')) {
+        const demo = dbDemo()
+        dados.pts = demo.pts
+        dados.requisitos = demo.requisitos
+        const oc = demo.ocorrencias.find((o) => o.id === 'o1')
+        if (Array.isArray(dados.ocorrencias)) dados.ocorrencias = dados.ocorrencias.map((o: { id: string }) => (o.id === 'o1' && oc ? { ...o, investigacao: oc.investigacao } : o))
+      }
       return { ...base, ...dados, config: { ...base.config, ...(dados.config || {}) } }
     }
   } catch {
