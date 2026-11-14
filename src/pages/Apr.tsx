@@ -1,4 +1,5 @@
 import { ArrowLeft, Copy, Plus, Printer, Trash2 } from 'lucide-react'
+import { BlocoAssinatura, ColetaAssinaturas, TabelaAssinaturas } from '../components/Assinatura'
 import { BadgeStatus, Campo, Link, PageHead, Vazio, navegar, toast, CabecalhoDoc } from '../components/ui'
 import { nivelRisco } from '../lib/catalogos'
 import { daEmpresaAtiva, db, nomes, useDB } from '../lib/store'
@@ -192,6 +193,13 @@ export function EditarApr({ id }: { id: string }) {
           <Plus size={16} /> Adicionar etapa
         </button>
         <p className="nota">Matriz: probabilidade × severidade. 1–4 baixo · 5–9 moderado · 10–14 alto · 15–25 crítico (não iniciar sem medidas adicionais).</p>
+        <ColetaAssinaturas
+          titulo="Assinaturas da equipe"
+          ajuda="Depois de apresentar a APR, colete a assinatura de cada participante na tela do celular. As assinaturas saem na versão impressa."
+          assinaturas={apr.assinaturas}
+          sugestoes={apr.equipe.split(',').map((n) => n.trim()).filter(Boolean)}
+          onChange={(l) => set({ assinaturas: l })}
+        />
       </div>
 
       {/* Versão para impressão */}
@@ -225,16 +233,9 @@ export function EditarApr({ id }: { id: string }) {
           </tbody>
         </table>
         <p className="declaracao">Declaramos ter participado da análise de riscos desta atividade, conhecer os perigos identificados e as medidas de controle, e nos comprometemos a cumpri-las. Qualquer mudança nas condições exige a revisão desta APR.</p>
-        <table>
-          <thead><tr><th style={{ width: '60%' }}>Nome do participante</th><th>Assinatura</th></tr></thead>
-          <tbody>
-            {Array.from({ length: Math.max(5, apr.equipe.split(',').filter(Boolean).length) }, (_, i) => (
-              <tr key={i}><td style={{ height: 28 }}>{apr.equipe.split(',')[i]?.trim() ?? ''}</td><td /></tr>
-            ))}
-          </tbody>
-        </table>
+        <TabelaAssinaturas rotulo="Nome do participante" nomes={apr.equipe.split(',')} assinaturas={apr.assinaturas} minimo={5} />
         <div className="assinaturas">
-          <div>{apr.responsavel}<br />Responsável pela APR</div>
+          <BlocoAssinatura imagem={apr.responsavel === d.config.tecnico ? d.config.assinatura : undefined}>{apr.responsavel}<br />Responsável pela APR</BlocoAssinatura>
           <div>Supervisor / encarregado<br />Liberação da atividade</div>
         </div>
       </div>

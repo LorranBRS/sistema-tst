@@ -1,10 +1,13 @@
-import { ArrowLeft, Printer } from 'lucide-react'
-import { Link, PageHead, Vazio, CabecalhoDoc } from '../components/ui'
-import { useDB } from '../lib/store'
+import { ArrowLeft, PenLine, Printer } from 'lucide-react'
+import { BlocoAssinatura, ImgAssinatura, PadAssinatura } from '../components/Assinatura'
+import { useState } from 'react'
+import { Link, PageHead, Vazio, CabecalhoDoc, toast } from '../components/ui'
+import { db, useDB } from '../lib/store'
 import { fmtData } from '../lib/utils'
 
 export default function FichaEpi({ id }: { id: string }) {
   const d = useDB()
+  const [assinando, setAssinando] = useState<string | null>(null)
   const c = d.colaboradores.find((x) => x.id === id)
   if (!c) return <Vazio texto="Colaborador não encontrado."><Link to="/app/colaboradores">Voltar</Link></Vazio>
   const e = d.empresas.find((x) => x.id === c.empresaId)
@@ -67,7 +70,15 @@ export default function FichaEpi({ id }: { id: string }) {
                   <td>{epi?.ca ?? '—'}</td>
                   <td>{x.motivo}</td>
                   <td />
-                  <td />
+                  <td>
+                    {x.assinatura ? (
+                      <ImgAssinatura a={x.assinatura} altura={34} />
+                    ) : (
+                      <button className="btn btn-sm nao-imprimir" onClick={() => setAssinando(x.id)}>
+                        <PenLine size={13} /> Assinar
+                      </button>
+                    )}
+                  </td>
                 </tr>
               )
             })}
@@ -81,9 +92,18 @@ export default function FichaEpi({ id }: { id: string }) {
         </table>
         <div className="assinaturas">
           <div>{c.nome}<br />Colaborador</div>
-          <div>{d.config.tecnico}{d.config.registro ? ` – ${d.config.registro}` : ''}<br />Técnico(a) de Segurança do Trabalho</div>
+          <BlocoAssinatura imagem={d.config.assinatura}>{d.config.tecnico}{d.config.registro ? ` – ${d.config.registro}` : ''}<br />Técnico(a) de Segurança do Trabalho</BlocoAssinatura>
         </div>
       </div>
+      {assinando && (
+        <PadAssinatura
+          titulo="Assinatura do recebimento do EPI"
+          nome={c.nome}
+          aviso={(() => { const x = entregas.find((e) => e.id === assinando); const epi = d.epis.find((p) => p.id === x?.epiId); return `${c.nome} declara ter recebido: ${x?.quantidade}× ${epi?.nome ?? 'EPI'} (CA ${epi?.ca ?? '—'}) em ${fmtData(x?.data)}, conforme o termo da ficha.` })()}
+          onClose={() => setAssinando(null)}
+          onSalvar={(a) => { db.atualizar('entregas', assinando, { assinatura: { ...a, nome: c.nome } }); toast('Recebimento assinado') }}
+        />
+      )}
     </>
   )
 }

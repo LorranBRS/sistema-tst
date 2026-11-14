@@ -31,6 +31,10 @@ SaaS web para o dia a dia do **Técnico de Segurança do Trabalho**: EPIs, trein
 | **Relatório mensal** | Indicadores, TF/TG do mês e do ano, ocorrências, inspeções, treinamentos, DDS, plano de ação e pendências |
 | **Configurações** | Perfil do técnico, seu logo, cor do sistema, antecedência dos alertas, tema claro/escuro, backup/importação |
 
+**Assinatura na tela** (dedo no celular ou mouse): recebimento de EPI na ficha, equipe da APR, executantes da PT, lista de presença do DDS e assinatura do técnico nos documentos.
+
+**App instalável e offline:** o site pode ser instalado no celular ou no computador (PWA) e abre sem internet; os dados ficam no aparelho.
+
 Todas as listas têm busca, filtros e **exportação CSV** (abre direto no Excel). Botões no topo trocam o tema (claro/escuro) e a cor do sistema; os documentos impressos levam o logo da empresa e o do técnico.
 
 ## Tela de apresentação

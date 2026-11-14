@@ -1,6 +1,7 @@
 // Permissão de Trabalho (PT): altura, quente, espaço confinado, eletricidade e escavação.
 import { useState } from 'react'
 import { ArrowLeft, Plus, Printer, Trash2 } from 'lucide-react'
+import { BlocoAssinatura, ColetaAssinaturas, TabelaAssinaturas } from '../components/Assinatura'
 import { BadgeStatus, Campo, Link, Modal, PageHead, Vazio, navegar, toast, CabecalhoDoc } from '../components/ui'
 import { REF_GASES, TIPOS_PT } from '../lib/catalogos'
 import { daEmpresaAtiva, db, nomes, useDB } from '../lib/store'
@@ -244,6 +245,13 @@ export function EditarPt({ id }: { id: string }) {
             <textarea className="input" value={pt.observacoes} onChange={(e) => set({ observacoes: e.target.value })} />
           </Campo>
         </div>
+        <ColetaAssinaturas
+          titulo="Assinaturas dos executantes"
+          ajuda="Cada executante assina na tela confirmando que conhece os riscos e as medidas desta PT. As assinaturas saem na versão impressa."
+          assinaturas={pt.assinaturas}
+          sugestoes={pt.executantes.split(',').map((n) => n.trim()).filter(Boolean)}
+          onChange={(l) => set({ assinaturas: l })}
+        />
       </div>
 
       {/* Versão para impressão */}
@@ -274,16 +282,9 @@ export function EditarPt({ id }: { id: string }) {
         )}
         {pt.observacoes && <p className="declaracao"><b>Observações:</b> {pt.observacoes}</p>}
         <p className="declaracao">A atividade só pode ser iniciada com todas as verificações atendidas. Esta PT vale somente para a data, o horário e o local indicados e deve permanecer no local de trabalho. Qualquer mudança nas condições exige a suspensão do serviço e a emissão de nova PT.</p>
-        <table>
-          <thead><tr><th style={{ width: '60%' }}>Executante</th><th>Assinatura</th></tr></thead>
-          <tbody>
-            {Array.from({ length: Math.max(4, pt.executantes.split(',').filter(Boolean).length) }, (_, i) => (
-              <tr key={i}><td style={{ height: 28 }}>{pt.executantes.split(',')[i]?.trim() ?? ''}</td><td /></tr>
-            ))}
-          </tbody>
-        </table>
+        <TabelaAssinaturas rotulo="Executante" nomes={pt.executantes.split(',')} assinaturas={pt.assinaturas} />
         <div className="assinaturas">
-          <div>{pt.emitente}<br />Emitente da PT</div>
+          <BlocoAssinatura imagem={pt.emitente === d.config.tecnico ? d.config.assinatura : undefined}>{pt.emitente}<br />Emitente da PT</BlocoAssinatura>
           <div>Responsável pela área<br />Liberação</div>
         </div>
         <div className="assinaturas" style={{ marginTop: 36 }}>

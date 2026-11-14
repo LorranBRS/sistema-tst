@@ -1,5 +1,6 @@
 // Investigação de acidente/incidente: 5 porquês + causas por categoria (6M) + causa raiz.
 import { ArrowLeft, CheckCheck, ListPlus, Plus, Printer, Trash2 } from 'lucide-react'
+import { BlocoAssinatura } from '../components/Assinatura'
 import { BadgeStatus, Campo, Link, PageHead, Vazio, toast, CabecalhoDoc } from '../components/ui'
 import { CATEGORIAS_6M } from '../lib/catalogos'
 import { db, nomes, useDB } from '../lib/store'
@@ -160,7 +161,7 @@ export default function Investigacao({ id }: { id: string }) {
         <p className="declaracao"><b>Causa raiz:</b> {inv.causaRaiz}</p>
         <p className="declaracao"><b>Conclusão e recomendações:</b> {inv.conclusao}</p>
         <div className="assinaturas">
-          <div>{d.config.tecnico}<br />Técnico(a) de Segurança do Trabalho</div>
+          <BlocoAssinatura imagem={d.config.assinatura}>{d.config.tecnico}<br />Técnico(a) de Segurança do Trabalho</BlocoAssinatura>
           <div>{empresa?.responsavel || 'Responsável da empresa'}<br />Ciente</div>
         </div>
       </div>

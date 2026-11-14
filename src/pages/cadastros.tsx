@@ -1,5 +1,5 @@
 // Configuração dos módulos de cadastro que usam a página genérica (CrudPage).
-import { ExternalLink, FileSearch, FileText, Lightbulb } from 'lucide-react'
+import { ClipboardSignature, ExternalLink, FileSearch, FileText, Lightbulb } from 'lucide-react'
 import { BotaoImportarColaboradores } from '../components/ImportarColaboradores'
 import { CrudPage, type CrudConfig, type Reg } from '../components/CrudPage'
 import { BadgeStatus, Link, Validade, toast } from '../components/ui'
@@ -432,10 +432,19 @@ export const cfgDds: CrudConfig = {
     { rotulo: 'Tema', texto: (r) => r.tema, render: (r) => <strong>{r.tema}</strong> },
     colEmpresa,
     { rotulo: 'Conduzido por', texto: (r) => r.responsavel, esconderMobile: true },
-    { rotulo: 'Participantes', texto: (r) => String(r.participantes) },
+    {
+      rotulo: 'Participantes',
+      texto: (r) => String(r.participantes),
+      render: (r) => <div>{r.participantes}{r.presencas?.length ? <span className="sub">{r.presencas.length} assinatura(s)</span> : null}</div>,
+    },
     { rotulo: 'Duração', texto: (r) => `${r.duracao} min`, esconderMobile: true },
   ],
   ordenar: porData('data'),
+  acoesExtras: (r) => (
+    <Link to={'/app/dds/' + r.id} className="btn btn-sm">
+      <ClipboardSignature size={14} /> Presença
+    </Link>
+  ),
 }
 
 export function PaginaDds() {

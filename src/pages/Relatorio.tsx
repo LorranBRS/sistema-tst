@@ -1,6 +1,7 @@
 // Relatório mensal de SST por empresa, pronto para imprimir ou salvar em PDF.
 import { useState, type ReactNode } from 'react'
 import { Printer } from 'lucide-react'
+import { BlocoAssinatura } from '../components/Assinatura'
 import { Campo, PageHead, CabecalhoDoc } from '../components/ui'
 import { TIPOS_ACIDENTE } from '../lib/catalogos'
 import { empresaDoRegistro, nomes, useDB } from '../lib/store'
@@ -190,7 +191,7 @@ export default function Relatorio() {
         )}
 
         <div className="assinaturas">
-          <div>{d.config.tecnico}<br />Técnico(a) de Segurança do Trabalho</div>
+          <BlocoAssinatura imagem={d.config.assinatura}>{d.config.tecnico}<br />Técnico(a) de Segurança do Trabalho</BlocoAssinatura>
           <div>{empresa?.responsavel || 'Responsável pela empresa'}<br />Ciente</div>
         </div>
       </div>

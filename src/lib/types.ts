@@ -1,5 +1,12 @@
 export type ID = string
 
+/** Assinatura feita na tela (imagem PNG em data URL). */
+export interface Assinatura {
+  nome: string
+  imagem: string
+  em: string // data e hora ISO
+}
+
 export interface Empresa {
   id: ID
   nome: string
@@ -43,6 +50,7 @@ export interface Entrega {
   data: string
   proximaTroca: string
   motivo: string
+  assinatura?: Assinatura
 }
 
 export interface Treinamento {
@@ -116,6 +124,7 @@ export interface Pt {
   medicoes: { o2: string; lel: string; h2s: string; co: string }
   observacoes: string
   status: 'Aberta' | 'Encerrada' | 'Cancelada'
+  assinaturas?: Assinatura[]
 }
 
 export interface ModeloProprio {
@@ -155,6 +164,7 @@ export interface Dds {
   participantes: number
   duracao: number
   observacoes: string
+  presencas?: Assinatura[]
 }
 
 export type Resposta = 'C' | 'NC' | 'NA' | ''
@@ -199,12 +209,14 @@ export interface Apr {
   equipe: string
   etapas: EtapaApr[]
   status: 'Rascunho' | 'Aprovada' | 'Encerrada'
+  assinaturas?: Assinatura[]
 }
 
 export interface Config {
   tecnico: string
   corPrimaria?: string
   logo?: string // logo do técnico / consultoria (data URL)
+  assinatura?: string // assinatura do técnico (data URL)
   registro: string
   email: string
   telefone: string

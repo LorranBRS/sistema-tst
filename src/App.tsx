@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import {
   AlertTriangle, Building2, Calculator, ClipboardCheck, FileWarning, GraduationCap, HardHat, LayoutDashboard, ListTodo, Menu,
-  MessagesSquare, Moon, Palette, Check, FileBarChart, FileCheck2, Grid3x3, PackageCheck, Sun, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
+  MessagesSquare, Moon, Download, WifiOff, Palette, Check, FileBarChart, FileCheck2, Grid3x3, PackageCheck, Sun, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
 } from 'lucide-react'
 import { Link, ToastHost, useRota } from './components/ui'
 import { Pagina, PaginaDds, cfgAcoes, cfgAsos, cfgColaboradores, cfgEmpresas, cfgEntregas, cfgEpis, cfgOcorrencias, cfgTreinamentos } from './pages/cadastros'
@@ -12,6 +12,7 @@ import Pts, { EditarPt } from './pages/Pts'
 import Investigacao from './pages/Investigacao'
 import Matriz, { pendenciasMatriz } from './pages/Matriz'
 import Relatorio from './pages/Relatorio'
+import PresencaDds from './pages/PresencaDds'
 import FichaEpi from './pages/FichaEpi'
 import Calculadoras from './pages/Calculadoras'
 import Nrs from './pages/Nrs'
@@ -23,6 +24,7 @@ import Landing from './pages/Landing'
 const MOSTRAR_APRESENTACAO = false
 import { db, daEmpresaAtiva, useDB } from './lib/store'
 import { aplicarCor } from './lib/aparencia'
+import { instalar, jaInstalado, useConviteInstalar, useOnline } from './lib/instalar'
 import { CORES } from './lib/catalogos'
 import { diasAte, situacao } from './lib/utils'
 import type { DB } from './lib/types'
@@ -107,6 +109,7 @@ function resolverPagina(rota: string): { ativo: string; conteudo: ReactNode } {
   const partes = rota.split('/').filter(Boolean) // ['app', 'inspecoes', 'id']
   if (partes[1] === 'inspecoes' && partes[2]) return { ativo: '/app/inspecoes', conteudo: <ExecutarInspecao id={partes[2]} /> }
   if (partes[1] === 'apr' && partes[2]) return { ativo: '/app/apr', conteudo: <EditarApr id={partes[2]} /> }
+  if (partes[1] === 'dds' && partes[2]) return { ativo: '/app/dds', conteudo: <PresencaDds id={partes[2]} /> }
   if (partes[1] === 'pt' && partes[2]) return { ativo: '/app/pt', conteudo: <EditarPt id={partes[2]} /> }
   if (partes[1] === 'investigacao' && partes[2]) return { ativo: '/app/ocorrencias', conteudo: <Investigacao id={partes[2]} /> }
   if (partes[1] === 'ficha-epi' && partes[2]) return { ativo: '/app/colaboradores', conteudo: <FichaEpi id={partes[2]} /> }
@@ -169,7 +172,7 @@ export default function App() {
             })}
           </nav>
         ))}
-        <div className="sidebar-foot">Dados salvos neste navegador · v1.2</div>
+        <div className="sidebar-foot">Dados salvos neste navegador · v1.3</div>
       </aside>
       {menuAberto && <div onClick={() => setMenuAberto(false)} style={{ position: 'fixed', inset: 0, zIndex: 55 }} />}
       <div className="main">
@@ -192,6 +195,8 @@ export default function App() {
             ))}
           </select>
           <span className="spacer" />
+          <AvisoOffline />
+          <BotaoInstalar />
           <BotaoCor />
           <BotaoTema />
           <span className="esconde-mobile" style={{ fontSize: 14, color: 'var(--muted)' }}>
@@ -272,5 +277,27 @@ function BotaoCor() {
         </div>
       )}
     </div>
+  )
+}
+
+/** Aviso discreto quando o aparelho está sem internet (o sistema continua funcionando). */
+function AvisoOffline() {
+  const online = useOnline()
+  if (online) return null
+  return (
+    <span className="badge avencer" title="Sem internet: tudo continua funcionando e fica salvo neste aparelho">
+      <WifiOff size={13} /> <span className="esconde-mobile">Sem internet</span>
+    </span>
+  )
+}
+
+/** Botão "Instalar" quando o navegador permite instalar o app (Chrome, Edge, Android). */
+function BotaoInstalar() {
+  const convite = useConviteInstalar()
+  if (!convite || jaInstalado()) return null
+  return (
+    <button className="btn btn-sm btn-primary" onClick={() => instalar()} title="Instalar o Sistema TST como aplicativo">
+      <Download size={15} /> <span className="esconde-mobile">Instalar app</span>
+    </button>
   )
 }
