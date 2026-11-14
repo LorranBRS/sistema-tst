@@ -5,7 +5,7 @@ import { Download, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import type { ColKey, DB } from '../lib/types'
 import { db, daEmpresaAtiva, useDB } from '../lib/store'
 import { baixarArquivo, gerarCSV, hoje, normalizar } from '../lib/utils'
-import { Campo, Modal, PageHead, Vazio, toast } from './ui'
+import { Campo, CampoLogo, Modal, PageHead, Vazio, toast } from './ui'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Reg = { id: string; [k: string]: any }
@@ -13,7 +13,7 @@ export type Reg = { id: string; [k: string]: any }
 export interface CampoDef {
   nome: string
   rotulo: string
-  tipo: 'text' | 'number' | 'date' | 'select' | 'textarea' | 'ref' | 'datalist'
+  tipo: 'text' | 'number' | 'date' | 'select' | 'textarea' | 'ref' | 'datalist' | 'imagem'
   opcoes?: string[] | ((d: DB) => string[])
   ref?: 'empresas' | 'colaboradores' | 'epis'
   obrigatorio?: boolean
@@ -53,6 +53,8 @@ export interface CrudConfig {
   cabecalhoExtra?: ReactNode
   /** botões extras ao lado de "Exportar CSV" */
   botoesExtras?: ReactNode
+  /** palavra feminina (nova empresa, nenhuma ocorrência...) */
+  feminino?: boolean
 }
 
 function rotuloRef(d: DB, col: 'empresas' | 'colaboradores' | 'epis', r: Reg) {
@@ -92,7 +94,7 @@ export function CrudPage({ cfg }: { cfg: CrudConfig }) {
   }
 
   function excluir(r: Reg) {
-    if (confirm(`Excluir este registro de ${cfg.singular.toLowerCase()}? Essa ação não pode ser desfeita.`)) {
+    if (confirm(`Excluir este registro (${cfg.singular.toLowerCase()})? Essa ação não pode ser desfeita.`)) {
       db.remover(cfg.colecao, r.id)
       toast('Registro excluído')
     }
@@ -106,7 +108,7 @@ export function CrudPage({ cfg }: { cfg: CrudConfig }) {
           <Download size={16} /> Exportar CSV
         </button>
         <button className="btn btn-primary" onClick={novo}>
-          <Plus size={16} /> Novo {cfg.singular.toLowerCase()}
+          <Plus size={16} /> {cfg.feminino ? 'Nova' : 'Novo'} {cfg.singular.toLowerCase()}
         </button>
       </PageHead>
       {cfg.cabecalhoExtra}
@@ -128,7 +130,7 @@ export function CrudPage({ cfg }: { cfg: CrudConfig }) {
           )}
         </div>
         {lista.length === 0 ? (
-          <Vazio texto={todos.length ? 'Nenhum registro encontrado com esses filtros.' : `Nenhum ${cfg.singular.toLowerCase()} cadastrado ainda.`}>
+          <Vazio texto={todos.length ? 'Nenhum registro encontrado com esses filtros.' : `${cfg.feminino ? 'Nenhuma' : 'Nenhum'} ${cfg.singular.toLowerCase()} ${cfg.feminino ? 'cadastrada' : 'cadastrado'} ainda.`}>
             {!todos.length && (
               <button className="btn btn-primary" onClick={novo}>
                 <Plus size={16} /> Cadastrar
@@ -203,7 +205,7 @@ function Formulario({ cfg, inicial, onClose }: { cfg: CrudConfig; inicial: Reg; 
       const { id: _id, ...dados } = v
       const id = db.adicionar(cfg.colecao, dados as never)
       cfg.aoCriar?.({ ...v, id })
-      toast(`${cfg.singular} cadastrado(a)`)
+      toast(`${cfg.singular} ${cfg.feminino ? 'cadastrada' : 'cadastrado'}`)
     } else {
       db.atualizar(cfg.colecao, v.id, v as never)
       toast('Alterações salvas')
@@ -215,7 +217,7 @@ function Formulario({ cfg, inicial, onClose }: { cfg: CrudConfig; inicial: Reg; 
 
   return (
     <Modal
-      titulo={(novo ? 'Novo ' : 'Editar ') + cfg.singular.toLowerCase()}
+      titulo={(novo ? (cfg.feminino ? 'Nova ' : 'Novo ') : 'Editar ') + cfg.singular.toLowerCase()}
       onClose={onClose}
       rodape={
         <>
@@ -240,7 +242,9 @@ function Formulario({ cfg, inicial, onClose }: { cfg: CrudConfig; inicial: Reg; 
           const rot = c.rotulo + (c.obrigatorio ? ' *' : '')
           const val = v[c.nome] ?? ''
           let input: ReactNode
-          if (c.tipo === 'textarea') {
+          if (c.tipo === 'imagem') {
+            input = <CampoLogo valor={val} onChange={(v) => mudar(c.nome, v)} />
+          } else if (c.tipo === 'textarea') {
             input = <textarea className="input" value={val} placeholder={c.placeholder} onChange={(e) => mudar(c.nome, e.target.value)} />
           } else if (c.tipo === 'select') {
             const ops = typeof c.opcoes === 'function' ? c.opcoes(d) : c.opcoes ?? []
@@ -289,7 +293,7 @@ function Formulario({ cfg, inicial, onClose }: { cfg: CrudConfig; inicial: Reg; 
             )
           }
           return (
-            <Campo key={c.nome} label={rot} full={c.full || c.tipo === 'textarea'} ajuda={c.ajuda}>
+            <Campo key={c.nome} label={rot} full={c.full || c.tipo === 'textarea' || c.tipo === 'imagem'} ajuda={c.ajuda}>
               {input}
             </Campo>
           )

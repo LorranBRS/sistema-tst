@@ -159,6 +159,57 @@ export const MODELOS_INSPECAO: ModeloInspecao[] = [
       'Kit de primeiros socorros completo',
     ],
   },
+  {
+    id: 'empilhadeira',
+    nome: 'Empilhadeira',
+    nr: 'NR-11',
+    itens: [
+      'Operador capacitado, autorizado e com identificação visível',
+      'Checklist diário pré-uso preenchido',
+      'Freios de serviço e de estacionamento funcionando',
+      'Buzina e alarme sonoro de ré funcionando',
+      'Luzes, faróis e giroflex funcionando',
+      'Garfos, correntes e torre sem trincas ou desgaste excessivo',
+      'Cinto de segurança e protetor do operador (santo antônio) instalados',
+      'Pneus em bom estado e sem vazamentos de óleo ou gás',
+      'Capacidade de carga indicada em local visível',
+      'Corredores demarcados e área de circulação livre',
+    ],
+  },
+  {
+    id: 'caldeiras',
+    nome: 'Caldeiras e vasos de pressão',
+    nr: 'NR-13',
+    itens: [
+      'Placa de identificação visível e legível',
+      'Prontuário e registro de segurança disponíveis',
+      'Válvula de segurança com pressão de abertura ajustada e lacrada',
+      'Manômetro instalado, legível e calibrado',
+      'Inspeção de segurança periódica dentro do prazo',
+      'Operador com treinamento específico (caldeiras)',
+      'Ausência de vazamentos, corrosão ou deformações aparentes',
+      'Casa de caldeiras com saídas desobstruídas e ventilação',
+      'Dispositivos de controle e alarme de nível funcionando',
+      'Procedimentos de operação e emergência disponíveis',
+    ],
+  },
+  {
+    id: 'ergonomia',
+    nome: 'Ergonomia do posto de trabalho',
+    nr: 'NR-17',
+    itens: [
+      'Altura da bancada ou mesa compatível com a tarefa e o trabalhador',
+      'Cadeira com regulagem de altura e apoio lombar',
+      'Monitor na altura dos olhos e a um braço de distância',
+      'Ferramentas e materiais ao alcance, sem torção do tronco',
+      'Levantamento manual de cargas dentro dos limites e com auxílio quando necessário',
+      'Pausas previstas em atividades repetitivas',
+      'Iluminação adequada ao posto',
+      'Conforto térmico e ruído compatíveis com a atividade',
+      'Trabalho em pé com possibilidade de alternância de postura',
+      'Avaliação ergonômica preliminar (AEP) realizada',
+    ],
+  },
 ]
 
 export const TEMAS_DDS: { tema: string; texto: string }[] = [
@@ -178,6 +229,19 @@ export const TEMAS_DDS: { tema: string; texto: string }[] = [
   { tema: 'Direção segura', texto: 'Cinto sempre, celular nunca ao volante e respeito aos limites de velocidade. A maioria dos acidentes de trajeto é evitável.' },
   { tema: 'Saúde mental e fadiga', texto: 'Cansaço e preocupação reduzem a atenção. Durma bem, fale com a liderança se não estiver em condições e cuide dos colegas.' },
   { tema: 'Sinalização de segurança', texto: 'Cores e placas comunicam riscos e obrigações. Respeite isolamentos, não remova placas e avise quando a sinalização estiver faltando.' },
+]
+
+/** Consulta pública de CA do Ministério do Trabalho (não há API aberta para consulta automática). */
+export const CAEPI_URL = 'https://caepi.trabalho.gov.br/internet/ConsultaCAInternet.aspx'
+
+/** Cores principais disponíveis (claro / escuro). */
+export const CORES: { id: string; nome: string; claro: [string, string, string]; escuro: [string, string, string] }[] = [
+  { id: 'verde', nome: 'Verde', claro: ['#15803d', '#116932', '#e3f4e9'], escuro: ['#22a35a', '#2bbd69', '#16301f'] },
+  { id: 'azul', nome: 'Azul', claro: ['#1d4ed8', '#1e40af', '#e6edfd'], escuro: ['#5b8cf5', '#7aa2f7', '#17233f'] },
+  { id: 'laranja', nome: 'Laranja', claro: ['#c2410c', '#9a3412', '#fdeee5'], escuro: ['#f07a3a', '#f59157', '#3a2015'] },
+  { id: 'roxo', nome: 'Roxo', claro: ['#7c3aed', '#6d28d9', '#f0e9fe'], escuro: ['#a07af7', '#b496f8', '#271a40'] },
+  { id: 'vermelho', nome: 'Vermelho', claro: ['#b91c1c', '#991b1b', '#fdeaea'], escuro: ['#ef6262', '#f37f7f', '#3a1717'] },
+  { id: 'grafite', nome: 'Grafite', claro: ['#374151', '#1f2937', '#eceef1'], escuro: ['#9ca3af', '#b8bec7', '#252a31'] },
 ]
 
 export const NRS_URL =

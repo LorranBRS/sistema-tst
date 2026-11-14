@@ -1,7 +1,7 @@
 // Permissão de Trabalho (PT): altura, quente, espaço confinado, eletricidade e escavação.
 import { useState } from 'react'
 import { ArrowLeft, Plus, Printer, Trash2 } from 'lucide-react'
-import { BadgeStatus, Campo, Link, Modal, PageHead, Vazio, navegar, toast } from '../components/ui'
+import { BadgeStatus, Campo, Link, Modal, PageHead, Vazio, navegar, toast, CabecalhoDoc } from '../components/ui'
 import { REF_GASES, TIPOS_PT } from '../lib/catalogos'
 import { daEmpresaAtiva, db, nomes, useDB } from '../lib/store'
 import type { ItemPt, Pt } from '../lib/types'
@@ -248,6 +248,7 @@ export function EditarPt({ id }: { id: string }) {
 
       {/* Versão para impressão */}
       <div className="so-impressao doc">
+        <CabecalhoDoc empresa={empresa} />
         <h2>PERMISSÃO DE TRABALHO – {pt.numero}</h2>
         <div className="sub-doc">{pt.tipo} ({modelo?.nr}) · {empresa?.nome} · CNPJ {empresa?.cnpj}</div>
         <div className="info">

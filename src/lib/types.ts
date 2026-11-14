@@ -5,6 +5,7 @@ export interface Empresa {
   nome: string
   cnpj: string
   cnae: string
+  logo?: string // data URL (imagem reduzida)
   grauRisco: string
   endereco: string
   responsavel: string
@@ -117,6 +118,13 @@ export interface Pt {
   status: 'Aberta' | 'Encerrada' | 'Cancelada'
 }
 
+export interface ModeloProprio {
+  id: ID
+  nome: string
+  nr: string
+  itens: string[]
+}
+
 export interface Requisito {
   id: ID
   funcao: string
@@ -195,6 +203,8 @@ export interface Apr {
 
 export interface Config {
   tecnico: string
+  corPrimaria?: string
+  logo?: string // logo do técnico / consultoria (data URL)
   registro: string
   email: string
   telefone: string
@@ -217,6 +227,7 @@ export interface DB {
   aprs: Apr[]
   pts: Pt[]
   requisitos: Requisito[]
+  modelos: ModeloProprio[]
   config: Config
 }
 

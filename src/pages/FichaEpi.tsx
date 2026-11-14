@@ -1,5 +1,5 @@
 import { ArrowLeft, Printer } from 'lucide-react'
-import { Link, PageHead, Vazio } from '../components/ui'
+import { Link, PageHead, Vazio, CabecalhoDoc } from '../components/ui'
 import { useDB } from '../lib/store'
 import { fmtData } from '../lib/utils'
 
@@ -26,6 +26,7 @@ export default function FichaEpi({ id }: { id: string }) {
       </PageHead>
 
       <div className="doc">
+        <CabecalhoDoc empresa={e} />
         <h2>FICHA DE CONTROLE DE ENTREGA DE EPI</h2>
         <div className="sub-doc">Conforme NR-6 – Equipamentos de Proteção Individual</div>
         <div className="info">

@@ -28,6 +28,7 @@ export const dbVazio = (): DB => ({
   aprs: [],
   pts: [],
   requisitos: [],
+  modelos: [],
   config: configPadrao(),
 })
 
@@ -198,7 +199,7 @@ export function dbDemo(): DB {
   ]
 
   return {
-    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs, pts, requisitos,
+    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs, pts, requisitos, modelos: [],
     config: { ...configPadrao(), tecnico: 'Técnico(a) de Segurança (demo)' },
   }
 }

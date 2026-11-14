@@ -1,7 +1,7 @@
 // Relatório mensal de SST por empresa, pronto para imprimir ou salvar em PDF.
 import { useState, type ReactNode } from 'react'
 import { Printer } from 'lucide-react'
-import { Campo, PageHead } from '../components/ui'
+import { Campo, PageHead, CabecalhoDoc } from '../components/ui'
 import { TIPOS_ACIDENTE } from '../lib/catalogos'
 import { empresaDoRegistro, nomes, useDB } from '../lib/store'
 import type { DB } from '../lib/types'
@@ -89,6 +89,7 @@ export default function Relatorio() {
       </div>
 
       <div className="doc relatorio">
+        <CabecalhoDoc empresa={empresa} />
         <h2>RELATÓRIO MENSAL DE SEGURANÇA E SAÚDE NO TRABALHO</h2>
         <div className="sub-doc">{titulo}</div>
         <div className="info">

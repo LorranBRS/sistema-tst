@@ -1,5 +1,7 @@
-import { useEffect, useState, useSyncExternalStore, type ReactNode } from 'react'
-import { CheckCircle2, Inbox, X } from 'lucide-react'
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
+import { CheckCircle2, ImagePlus, Inbox, X } from 'lucide-react'
+import { lerLogo } from '../lib/imagem'
+import { useDB } from '../lib/store'
 import { fmtData, situacao, textoPrazo, type Situacao } from '../lib/utils'
 
 /* ---------- Roteador por hash (compatível com GitHub Pages) ---------- */
@@ -153,5 +155,41 @@ export function Stat({ rotulo, valor, detalhe, icone, tom, to }: { rotulo: strin
     </a>
   ) : (
     <div className="card stat">{corpo}</div>
+  )
+}
+
+/* ---------- Logo ---------- */
+export function CampoLogo({ valor, onChange }: { valor?: string; onChange: (v: string) => void }) {
+  const ref = useRef<HTMLInputElement>(null)
+  const [erro, setErro] = useState('')
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <div style={{ width: 120, height: 60, border: '1px dashed var(--border)', borderRadius: 9, display: 'grid', placeItems: 'center', background: '#fff', overflow: 'hidden' }}>
+          {valor ? <img src={valor} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <span style={{ fontSize: 12, color: '#888' }}>Sem logo</span>}
+        </div>
+        <button type="button" className="btn btn-sm" onClick={() => ref.current?.click()}><ImagePlus size={14} /> {valor ? 'Trocar' : 'Escolher imagem'}</button>
+        {valor && <button type="button" className="btn btn-sm btn-danger" onClick={() => onChange('')}>Remover</button>}
+      </div>
+      {erro && <div style={{ color: 'var(--danger)', fontSize: 12, marginTop: 4 }}>{erro}</div>}
+      <input ref={ref} type="file" accept="image/*" hidden onChange={async (e) => {
+        const f = e.target.files?.[0]
+        e.target.value = ''
+        if (!f) return
+        try { setErro(''); onChange(await lerLogo(f)) } catch (err) { setErro((err as Error).message) }
+      }} />
+    </div>
+  )
+}
+
+/** Logos da empresa (esquerda) e do técnico/consultoria (direita) no topo dos documentos impressos. */
+export function CabecalhoDoc({ empresa }: { empresa?: { logo?: string; nome: string } }) {
+  const d = useDB()
+  if (!empresa?.logo && !d.config.logo) return null
+  return (
+    <div className="logos-doc">
+      {empresa?.logo ? <img src={empresa.logo} alt={`Logo ${empresa.nome}`} /> : <span />}
+      {d.config.logo ? <img src={d.config.logo} alt="Logo do responsável técnico" /> : <span />}
+    </div>
   )
 }

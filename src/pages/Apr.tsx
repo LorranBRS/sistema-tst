@@ -1,5 +1,5 @@
 import { ArrowLeft, Copy, Plus, Printer, Trash2 } from 'lucide-react'
-import { BadgeStatus, Campo, Link, PageHead, Vazio, navegar, toast } from '../components/ui'
+import { BadgeStatus, Campo, Link, PageHead, Vazio, navegar, toast, CabecalhoDoc } from '../components/ui'
 import { nivelRisco } from '../lib/catalogos'
 import { daEmpresaAtiva, db, nomes, useDB } from '../lib/store'
 import type { Apr, EtapaApr } from '../lib/types'
@@ -196,6 +196,7 @@ export function EditarApr({ id }: { id: string }) {
 
       {/* Versão para impressão */}
       <div className="so-impressao doc">
+        <CabecalhoDoc empresa={empresa} />
         <h2>ANÁLISE PRELIMINAR DE RISCO – {apr.numero}</h2>
         <div className="sub-doc">{empresa?.nome} · CNPJ {empresa?.cnpj}</div>
         <div className="info">

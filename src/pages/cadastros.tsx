@@ -1,9 +1,9 @@
 // Configuração dos módulos de cadastro que usam a página genérica (CrudPage).
-import { FileSearch, FileText, Lightbulb } from 'lucide-react'
+import { ExternalLink, FileSearch, FileText, Lightbulb } from 'lucide-react'
 import { BotaoImportarColaboradores } from '../components/ImportarColaboradores'
 import { CrudPage, type CrudConfig, type Reg } from '../components/CrudPage'
-import { BadgeStatus, Link, Validade } from '../components/ui'
-import { CURSOS, GRAVIDADES, MOTIVOS_ENTREGA, TEMAS_DDS, TIPOS_ASO, TIPOS_OCORRENCIA } from '../lib/catalogos'
+import { BadgeStatus, Link, Validade, toast } from '../components/ui'
+import { CAEPI_URL, CURSOS, GRAVIDADES, MOTIVOS_ENTREGA, TEMAS_DDS, TIPOS_ASO, TIPOS_OCORRENCIA } from '../lib/catalogos'
 import { db, nomes } from '../lib/store'
 import type { DB } from '../lib/types'
 import { addDias, addMeses, diasAte, fmtData, situacao } from '../lib/utils'
@@ -37,6 +37,7 @@ export const cfgEmpresas: CrudConfig = {
   titulo: 'Empresas',
   sub: 'Clientes e unidades atendidas. Use o seletor no topo para trabalhar com uma empresa por vez.',
   singular: 'Empresa',
+  feminino: true,
   campos: [
     { nome: 'nome', rotulo: 'Razão social / nome', tipo: 'text', obrigatorio: true, full: true },
     { nome: 'cnpj', rotulo: 'CNPJ', tipo: 'text', placeholder: '00.000.000/0000-00' },
@@ -45,9 +46,19 @@ export const cfgEmpresas: CrudConfig = {
     { nome: 'responsavel', rotulo: 'Responsável / contato', tipo: 'text' },
     { nome: 'telefone', rotulo: 'Telefone', tipo: 'text' },
     { nome: 'endereco', rotulo: 'Endereço', tipo: 'text', full: true },
+    { nome: 'logo', rotulo: 'Logo da empresa', tipo: 'imagem', ajuda: 'Aparece no topo das fichas, APRs, PTs, inspeções e relatórios impressos' },
   ],
   colunas: [
-    { rotulo: 'Empresa', texto: (r) => r.nome, render: (r) => <div><strong>{r.nome}</strong><span className="sub">{r.cnpj}</span></div> },
+    {
+      rotulo: 'Empresa',
+      texto: (r) => r.nome,
+      render: (r) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {r.logo && <img src={r.logo} alt="" style={{ width: 36, height: 36, objectFit: 'contain', borderRadius: 6, background: '#fff', border: '1px solid var(--border)' }} />}
+          <div><strong>{r.nome}</strong><span className="sub">{r.cnpj}</span></div>
+        </div>
+      ),
+    },
     { rotulo: 'CNAE', texto: (r) => r.cnae, esconderMobile: true },
     { rotulo: 'Grau de risco', texto: (r) => r.grauRisco, render: (r) => (r.grauRisco ? <span className="badge">GR {r.grauRisco}</span> : '—') },
     { rotulo: 'Colaboradores', texto: (r, d) => String(d.colaboradores.filter((c) => c.empresaId === r.id && c.status !== 'Desligado').length) },
@@ -129,7 +140,7 @@ export const cfgEpis: CrudConfig = {
   campos: [
     { nome: 'nome', rotulo: 'Descrição do EPI', tipo: 'text', obrigatorio: true, full: true },
     { nome: 'ca', rotulo: 'Nº do CA', tipo: 'text', obrigatorio: true },
-    { nome: 'validadeCa', rotulo: 'Validade do CA', tipo: 'date', ajuda: 'Consulte no portal de CAs do Ministério do Trabalho' },
+    { nome: 'validadeCa', rotulo: 'Validade do CA', tipo: 'date', ajuda: 'Confira no botão "Consultar CA" da lista (consulta oficial do Ministério do Trabalho)' },
     { nome: 'fabricante', rotulo: 'Fabricante', tipo: 'text' },
     { nome: 'vidaUtilDias', rotulo: 'Vida útil / troca (dias)', tipo: 'number', ajuda: 'Usado para sugerir a próxima troca' },
     { nome: 'estoque', rotulo: 'Estoque atual', tipo: 'number' },
@@ -158,6 +169,23 @@ export const cfgEpis: CrudConfig = {
     { rotulo: 'Estoque baixo', teste: (r) => r.estoque <= r.estoqueMinimo },
   ],
   ordenar: (a, b) => a.nome.localeCompare(b.nome),
+  acoesExtras: (r) => (
+    <button className="btn btn-sm" title="Copia o nº do CA e abre a consulta oficial do Ministério do Trabalho" onClick={() => consultarCA(r.ca)}>
+      <ExternalLink size={14} /> Consultar CA
+    </button>
+  ),
+}
+
+/** Copia o nº do CA e abre a consulta oficial (o site do governo não oferece consulta automática). */
+function consultarCA(ca: string) {
+  const abrir = () => window.open(CAEPI_URL, '_blank', 'noopener')
+  if (navigator.clipboard && ca) {
+    navigator.clipboard.writeText(String(ca)).then(
+      () => toast(`CA ${ca} copiado — cole no campo "Nº do CA" da consulta`),
+      () => toast(`Digite o CA ${ca} na consulta oficial`),
+    )
+  } else if (ca) toast(`Digite o CA ${ca} na consulta oficial`)
+  abrir()
 }
 
 /* ---------- Entregas de EPI ---------- */
@@ -166,6 +194,7 @@ export const cfgEntregas: CrudConfig = {
   titulo: 'Entregas de EPI',
   sub: 'Registro de fornecimento (NR-6). A entrega baixa o estoque e calcula a próxima troca.',
   singular: 'Entrega',
+  feminino: true,
   escopo: 'colaborador',
   campos: [
     campoColab,
@@ -277,6 +306,7 @@ export const cfgOcorrencias: CrudConfig = {
   titulo: 'Acidentes e ocorrências',
   sub: 'Acidentes, incidentes e quase acidentes, com controle de CAT e investigação.',
   singular: 'Ocorrência',
+  feminino: true,
   escopo: 'empresa',
   campos: [
     campoEmpresa,
@@ -324,6 +354,7 @@ export const cfgAcoes: CrudConfig = {
   titulo: 'Plano de ação',
   sub: 'Ações corretivas e preventivas no formato 5W2H, vindas de inspeções, acidentes e auditorias.',
   singular: 'Ação',
+  feminino: true,
   escopo: 'empresa',
   campos: [
     { nome: 'oque', rotulo: 'O quê (ação)', tipo: 'text', obrigatorio: true, full: true },

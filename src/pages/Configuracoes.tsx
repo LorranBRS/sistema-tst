@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { Download, RotateCcw, Trash2, Upload } from 'lucide-react'
-import { Campo, PageHead, toast } from '../components/ui'
+import { Campo, CampoLogo, PageHead, toast } from '../components/ui'
+import { CORES } from '../lib/catalogos'
 import { db, useDB } from '../lib/store'
 import { baixarArquivo, hoje } from '../lib/utils'
 
@@ -44,6 +45,18 @@ export default function Configuracoes() {
             <Campo label="E-mail" full>
               <input className="input" type="email" value={c.email} onChange={(e) => db.configurar({ email: e.target.value })} />
             </Campo>
+            <Campo label="Seu logo (técnico / consultoria)" full ajuda="Sai no canto direito dos documentos impressos; o logo de cada empresa é cadastrado em Empresas">
+              <CampoLogo valor={c.logo} onChange={(v) => db.configurar({ logo: v })} />
+            </Campo>
+          </div>
+          <h3 style={{ fontSize: 15, margin: '22px 0 10px' }}>Cor do sistema</h3>
+          <div className="swatches" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(64px, 1fr))', marginBottom: 6 }}>
+            {CORES.map((cor) => (
+              <button key={cor.id} className={'swatch' + ((c.corPrimaria || 'verde') === cor.id ? ' ativo' : '')} aria-pressed={(c.corPrimaria || 'verde') === cor.id} onClick={() => db.configurar({ corPrimaria: cor.id })}>
+                <span className="bola" style={{ background: cor.claro[0] }} />
+                {cor.nome}
+              </button>
+            ))}
           </div>
           <h3 style={{ fontSize: 15, margin: '22px 0 14px' }}>Preferências</h3>
           <div className="form-grid">
@@ -66,7 +79,7 @@ export default function Configuracoes() {
           </div>
         </div>
 
-        <div className="card card-pad">
+        <div className="card card-pad" style={{ alignSelf: 'start' }}>
           <h3 style={{ fontSize: 15, marginBottom: 6 }}>Seus dados</h3>
           <p style={{ color: 'var(--muted)', fontSize: 14, marginTop: 0 }}>
             Nesta versão os dados ficam salvos <b>somente neste navegador</b> ({total} registros). Faça backups regularmente para não perder

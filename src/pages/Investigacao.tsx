@@ -1,6 +1,6 @@
 // Investigação de acidente/incidente: 5 porquês + causas por categoria (6M) + causa raiz.
 import { ArrowLeft, CheckCheck, ListPlus, Plus, Printer, Trash2 } from 'lucide-react'
-import { BadgeStatus, Campo, Link, PageHead, Vazio, toast } from '../components/ui'
+import { BadgeStatus, Campo, Link, PageHead, Vazio, toast, CabecalhoDoc } from '../components/ui'
 import { CATEGORIAS_6M } from '../lib/catalogos'
 import { db, nomes, useDB } from '../lib/store'
 import type { Investigacao as Inv } from '../lib/types'
@@ -131,6 +131,7 @@ export default function Investigacao({ id }: { id: string }) {
 
       {/* Versão para impressão */}
       <div className="so-impressao doc">
+        <CabecalhoDoc empresa={empresa} />
         <h2>RELATÓRIO DE INVESTIGAÇÃO DE OCORRÊNCIA</h2>
         <div className="sub-doc">{empresa?.nome} · CNPJ {empresa?.cnpj}</div>
         <div className="info">

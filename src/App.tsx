@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import {
   AlertTriangle, Building2, Calculator, ClipboardCheck, FileWarning, GraduationCap, HardHat, LayoutDashboard, ListTodo, Menu,
-  MessagesSquare, Moon, FileBarChart, FileCheck2, Grid3x3, PackageCheck, Sun, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
+  MessagesSquare, Moon, Palette, Check, FileBarChart, FileCheck2, Grid3x3, PackageCheck, Sun, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
 } from 'lucide-react'
 import { Link, ToastHost, useRota } from './components/ui'
 import { Pagina, PaginaDds, cfgAcoes, cfgAsos, cfgColaboradores, cfgEmpresas, cfgEntregas, cfgEpis, cfgOcorrencias, cfgTreinamentos } from './pages/cadastros'
@@ -22,6 +22,8 @@ import Landing from './pages/Landing'
 // Para reativar, troque para true — o arquivo src/pages/Landing.tsx foi mantido.
 const MOSTRAR_APRESENTACAO = false
 import { db, daEmpresaAtiva, useDB } from './lib/store'
+import { aplicarCor } from './lib/aparencia'
+import { CORES } from './lib/catalogos'
 import { diasAte, situacao } from './lib/utils'
 import type { DB } from './lib/types'
 
@@ -126,6 +128,9 @@ export default function App() {
     else delete el.dataset.theme
   }, [d.config.tema])
 
+  // Cor principal
+  useEffect(() => aplicarCor(d.config.corPrimaria), [d.config.corPrimaria])
+
   useEffect(() => {
     window.scrollTo(0, 0)
     setMenuAberto(false)
@@ -164,7 +169,7 @@ export default function App() {
             })}
           </nav>
         ))}
-        <div className="sidebar-foot">Dados salvos neste navegador · v1.1</div>
+        <div className="sidebar-foot">Dados salvos neste navegador · v1.2</div>
       </aside>
       {menuAberto && <div onClick={() => setMenuAberto(false)} style={{ position: 'fixed', inset: 0, zIndex: 55 }} />}
       <div className="main">
@@ -173,7 +178,7 @@ export default function App() {
             <Menu size={20} />
           </button>
           <select
-            className="input"
+            className="input seletor-empresa"
             style={{ width: 'auto', maxWidth: 'min(320px, 60vw)' }}
             value={d.config.empresaAtiva}
             onChange={(e) => db.configurar({ empresaAtiva: e.target.value })}
@@ -187,13 +192,14 @@ export default function App() {
             ))}
           </select>
           <span className="spacer" />
+          <BotaoCor />
           <BotaoTema />
           <span className="esconde-mobile" style={{ fontSize: 14, color: 'var(--muted)' }}>
             {d.config.tecnico}
           </span>
           <span
             aria-hidden="true"
-            style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--primary-soft)', color: 'var(--primary)', display: 'grid', placeItems: 'center', fontWeight: 700 }}
+            style={{ flexShrink: 0, width: 34, height: 34, borderRadius: '50%', background: 'var(--primary-soft)', color: 'var(--primary)', display: 'grid', placeItems: 'center', fontWeight: 700 }}
           >
             {d.config.tecnico.trim().charAt(0).toUpperCase() || 'T'}
           </span>
@@ -228,5 +234,43 @@ function BotaoTema() {
     <button className="btn btn-icon btn-tema" onClick={() => db.configurar({ tema: escuro ? 'claro' : 'escuro' })} title={rotulo} aria-label={rotulo}>
       {escuro ? <Sun size={19} /> : <Moon size={19} />}
     </button>
+  )
+}
+
+/** Botão no topo para escolher a cor principal do sistema. */
+function BotaoCor() {
+  const d = useDB()
+  const [aberto, setAberto] = useState(false)
+  const atual = d.config.corPrimaria || 'verde'
+  useEffect(() => {
+    if (!aberto) return
+    const fechar = (e: MouseEvent) => !(e.target as HTMLElement).closest('.paleta-wrap') && setAberto(false)
+    const esc = (e: KeyboardEvent) => e.key === 'Escape' && setAberto(false)
+    document.addEventListener('mousedown', fechar)
+    document.addEventListener('keydown', esc)
+    return () => {
+      document.removeEventListener('mousedown', fechar)
+      document.removeEventListener('keydown', esc)
+    }
+  }, [aberto])
+  return (
+    <div className="paleta-wrap">
+      <button className="btn btn-icon btn-tema" onClick={() => setAberto(!aberto)} title="Mudar a cor do sistema" aria-label="Mudar a cor do sistema" aria-expanded={aberto}>
+        <Palette size={19} />
+      </button>
+      {aberto && (
+        <div className="paleta" role="menu">
+          <div className="titulo-paleta">Cor do sistema</div>
+          <div className="swatches">
+            {CORES.map((c) => (
+              <button key={c.id} className={'swatch' + (atual === c.id ? ' ativo' : '')} role="menuitemradio" aria-checked={atual === c.id} onClick={() => db.configurar({ corPrimaria: c.id })}>
+                <span className="bola" style={{ background: c.claro[0] }}>{atual === c.id && <Check size={15} />}</span>
+                {c.nome}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
