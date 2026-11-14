@@ -248,11 +248,11 @@ export const NRS_URL =
   'https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes'
 
 export const NRS: { n: number; titulo: string; revogada?: boolean; modulo?: { rota: string; nome: string } }[] = [
-  { n: 1, titulo: 'Disposições Gerais e Gerenciamento de Riscos Ocupacionais', modulo: { rota: '/app/apr', nome: 'APR' } },
+  { n: 1, titulo: 'Disposições Gerais e Gerenciamento de Riscos Ocupacionais', modulo: { rota: '/app/pgr', nome: 'Inventário de riscos' } },
   { n: 2, titulo: 'Inspeção Prévia', revogada: true },
   { n: 3, titulo: 'Embargo e Interdição' },
   { n: 4, titulo: 'Serviços Especializados em Segurança e em Medicina do Trabalho (SESMT)' },
-  { n: 5, titulo: 'Comissão Interna de Prevenção de Acidentes e de Assédio (CIPA)', modulo: { rota: '/app/treinamentos', nome: 'Treinamentos' } },
+  { n: 5, titulo: 'Comissão Interna de Prevenção de Acidentes e de Assédio (CIPA)', modulo: { rota: '/app/cipa', nome: 'CIPA' } },
   { n: 6, titulo: 'Equipamentos de Proteção Individual (EPI)', modulo: { rota: '/app/epis', nome: 'EPIs' } },
   { n: 7, titulo: 'Programa de Controle Médico de Saúde Ocupacional (PCMSO)', modulo: { rota: '/app/asos', nome: 'ASOs' } },
   { n: 8, titulo: 'Edificações' },
@@ -270,7 +270,7 @@ export const NRS: { n: number; titulo: string; revogada?: boolean; modulo?: { ro
   { n: 20, titulo: 'Segurança e Saúde no Trabalho com Inflamáveis e Combustíveis' },
   { n: 21, titulo: 'Trabalhos a Céu Aberto' },
   { n: 22, titulo: 'Segurança e Saúde Ocupacional na Mineração' },
-  { n: 23, titulo: 'Proteção Contra Incêndios', modulo: { rota: '/app/inspecoes', nome: 'Inspeções' } },
+  { n: 23, titulo: 'Proteção Contra Incêndios', modulo: { rota: '/app/extintores', nome: 'Extintores' } },
   { n: 24, titulo: 'Condições Sanitárias e de Conforto nos Locais de Trabalho' },
   { n: 25, titulo: 'Resíduos Industriais' },
   { n: 26, titulo: 'Sinalização de Segurança' },
@@ -379,6 +379,26 @@ export const REF_GASES = {
   h2s: 'H₂S até 8 ppm (LT NR-15)',
   co: 'CO até 39 ppm (LT NR-15)',
 }
+
+/* ---------- Extintores ---------- */
+export const TIPOS_EXTINTOR = ['Água pressurizada (AP)', 'Pó químico BC', 'Pó químico ABC', 'CO₂', 'Espuma mecânica', 'Classe K (cozinha)']
+export const ITENS_INSPECAO_EXTINTOR = [
+  'Extintor no local indicado e sinalizado',
+  'Acesso desobstruído',
+  'Lacre e pino de segurança intactos',
+  'Manômetro na faixa verde (quando houver)',
+  'Mangueira, difusor e corpo sem danos',
+  'Etiqueta/selo de manutenção legível',
+]
+
+/* ---------- Inventário de riscos (PGR) ---------- */
+export const TIPOS_RISCO = ['Físico', 'Químico', 'Biológico', 'Ergonômico', 'Acidente']
+export const ESCALA_PROB = ['1 – Rara', '2 – Improvável', '3 – Possível', '4 – Provável', '5 – Quase certa']
+export const ESCALA_SEV = ['1 – Insignificante', '2 – Leve', '3 – Moderada', '4 – Grave', '5 – Catastrófica']
+export const CORES_RISCO: Record<string, string> = { Físico: '#16a34a', Químico: '#dc2626', Biológico: '#92400e', Ergonômico: '#ca8a04', Acidente: '#2563eb' }
+
+/* ---------- CIPA ---------- */
+export const FUNCOES_CIPA = ['Presidente', 'Vice-presidente', 'Secretário(a)', 'Titular', 'Suplente']
 
 /* ---------- Investigação de acidentes ---------- */
 export const CATEGORIAS_6M = ['Método', 'Mão de obra', 'Máquina', 'Material', 'Meio ambiente', 'Medição']

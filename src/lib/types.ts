@@ -134,6 +134,80 @@ export interface ModeloProprio {
   itens: string[]
 }
 
+export interface InspecaoExtintor {
+  data: string
+  ok: boolean
+  itensNc: string[]
+  obs: string
+  responsavel: string
+}
+
+export interface Extintor {
+  id: ID
+  empresaId: ID
+  numero: string
+  tipo: string
+  capacidade: string
+  local: string
+  ultimaRecarga: string
+  proximaRecarga: string
+  ultimoTeste: string
+  proximoTeste: string
+  ultimaInspecao: string
+  status: string
+  observacoes: string
+  inspecoes?: InspecaoExtintor[]
+}
+
+export interface Risco {
+  id: ID
+  empresaId: ID
+  setor: string
+  funcoes: string
+  atividade: string
+  tipo: string
+  perigo: string
+  fonte: string
+  lesoes: string
+  expostos: number
+  probabilidade: string
+  severidade: string
+  medidasExistentes: string
+  medidasPropostas: string
+  responsavel: string
+  prazo: string
+  acaoGerada?: boolean
+}
+
+export interface MembroCipa {
+  nome: string
+  funcao: string
+  representacao: string
+}
+
+export interface Cipa {
+  id: ID
+  empresaId: ID
+  gestao: string
+  inicio: string
+  fim: string
+  membros: MembroCipa[]
+}
+
+export interface ReuniaoCipa {
+  id: ID
+  cipaId: ID
+  data: string
+  hora: string
+  tipo: string
+  local: string
+  pauta: string
+  deliberacoes: string
+  presentes: string[]
+  status: 'Agendada' | 'Realizada' | 'Cancelada'
+  assinaturas?: Assinatura[]
+}
+
 export interface Requisito {
   id: ID
   funcao: string
@@ -240,6 +314,10 @@ export interface DB {
   pts: Pt[]
   requisitos: Requisito[]
   modelos: ModeloProprio[]
+  extintores: Extintor[]
+  riscos: Risco[]
+  cipas: Cipa[]
+  reunioes: ReuniaoCipa[]
   config: Config
 }
 

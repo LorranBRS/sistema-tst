@@ -2,7 +2,7 @@
 // para o painel sempre mostrar vencimentos e alertas realistas.
 import type { DB, Config, Ocorrencia } from './types'
 import { addDias, addMeses, hoje } from './utils'
-import { MODELOS_INSPECAO, TIPOS_PT } from './catalogos'
+import { ESCALA_PROB, ESCALA_SEV, MODELOS_INSPECAO, TIPOS_PT } from './catalogos'
 
 export const configPadrao = (): Config => ({
   tecnico: 'Técnico(a) de Segurança',
@@ -29,6 +29,10 @@ export const dbVazio = (): DB => ({
   pts: [],
   requisitos: [],
   modelos: [],
+  extintores: [],
+  riscos: [],
+  cipas: [],
+  reunioes: [],
   config: configPadrao(),
 })
 
@@ -198,8 +202,60 @@ export function dbDemo(): DB {
     { id: 'rq8', funcao: 'Soldador', cursos: ['NR-23 Brigada de incêndio', 'NR-12 Máquinas e equipamentos'] },
   ]
 
+  const ext = (id: string, empresaId: string, numero: string, tipo: string, capacidade: string, local: string, recarga: number, teste: number, inspecao: number) => ({
+    id, empresaId, numero, tipo, capacidade, local,
+    ultimaRecarga: d(recarga), proximaRecarga: addMeses(d(recarga), 12),
+    ultimoTeste: d(teste), proximoTeste: addMeses(d(teste), 60),
+    ultimaInspecao: d(inspecao), status: 'Em uso', observacoes: '',
+  })
+  const extintores = [
+    ext('x1', 'e1', 'EXT-01', 'Pó químico ABC', '6 kg', 'Almoxarifado', -300, -700, -12),
+    ext('x2', 'e1', 'EXT-02', 'Água pressurizada (AP)', '10 L', 'Bloco B – térreo', -380, -1500, -45),
+    ext('x3', 'e1', 'EXT-03', 'CO₂', '6 kg', 'Quadro geral de energia', -200, -1790, -8),
+    ext('x4', 'e2', 'EXT-10', 'Pó químico BC', '8 kg', 'Caldeiraria', -100, -400, -20),
+    ext('x5', 'e2', 'EXT-11', 'Pó químico ABC', '6 kg', 'Estamparia', -340, -900, -35),
+    ext('x6', 'e2', 'EXT-12', 'CO₂', '6 kg', 'Painéis elétricos', -60, -300, -5),
+  ]
+
+  const risco = (id: string, empresaId: string, setor: string, funcoes: string, atividade: string, tipo: string, perigo: string, fonte: string, lesoes: string, expostos: number, p: number, s: number, existentes: string, propostas: string) => ({
+    id, empresaId, setor, funcoes, atividade, tipo, perigo, fonte, lesoes, expostos,
+    probabilidade: ESCALA_PROB[p - 1], severidade: ESCALA_SEV[s - 1],
+    medidasExistentes: existentes, medidasPropostas: propostas, responsavel: '', prazo: '',
+  })
+  const riscos = [
+    risco('rs1', 'e1', 'Obras', 'Armador, Montadora de andaimes, Pedreiro', 'Trabalho em fachada e andaimes', 'Acidente', 'Trabalho em altura', 'Andaimes e bordas de laje', 'Fraturas, morte', 12, 3, 5, 'Treinamento NR-35, cinturão, guarda-corpo', 'Linha de vida em todos os pavimentos; inspeção diária de andaimes'),
+    risco('rs2', 'e1', 'Obras', 'Pedreiro', 'Corte de blocos e concreto', 'Químico', 'Poeira de sílica', 'Serra de corte a seco', 'Silicose', 6, 3, 4, 'Respirador PFF2', 'Corte a úmido; avaliação quantitativa de poeira'),
+    risco('rs3', 'e1', 'Elétrica', 'Eletricista', 'Montagem de quadros provisórios', 'Acidente', 'Choque elétrico', 'Instalações energizadas', 'Queimaduras, parada cardíaca', 2, 2, 5, 'NR-10, bloqueio e etiquetagem', 'Procedimento de desenergização por escrito'),
+    risco('rs4', 'e2', 'Estamparia', 'Operadora de prensa, Auxiliar de produção', 'Operação de prensas', 'Acidente', 'Prensamento de mãos', 'Prensas excêntricas', 'Amputação', 8, 3, 5, 'Treinamento NR-12', 'Cortina de luz e comando bimanual (em andamento)'),
+    risco('rs5', 'e2', 'Estamparia', 'Operadora de prensa, Auxiliar de produção', 'Operação de prensas', 'Físico', 'Ruído', 'Impacto das prensas', 'Perda auditiva', 8, 4, 3, 'Protetor auricular tipo plug', 'Enclausuramento acústico; audiometria semestral'),
+    risco('rs6', 'e2', 'Caldeiraria', 'Soldador', 'Soldagem e esmerilhamento', 'Químico', 'Fumos metálicos', 'Solda MIG', 'Intoxicação, doenças respiratórias', 3, 3, 3, 'Máscara de solda, PFF2', 'Exaustão localizada no posto de solda'),
+    risco('rs7', 'e2', 'Logística', 'Operador de empilhadeira', 'Movimentação de cargas', 'Ergonômico', 'Postura e vibração de corpo inteiro', 'Empilhadeira', 'Lombalgia', 2, 2, 2, 'Assento com amortecimento', 'Pausas e AEP do posto'),
+  ]
+
+  const cipas = [
+    {
+      id: 'cp1', empresaId: 'e2', gestao: `${h.slice(0, 4)}/${Number(h.slice(0, 4)) + 1}`, inicio: d(-250), fim: d(115),
+      membros: [
+        { nome: 'Paulo Henrique', funcao: 'Presidente', representacao: 'Empregador' },
+        { nome: 'Fernanda Oliveira', funcao: 'Vice-presidente', representacao: 'Empregados' },
+        { nome: 'Patrícia Gomes', funcao: 'Secretário(a)', representacao: 'Empregados' },
+        { nome: 'Diego Santos', funcao: 'Titular', representacao: 'Empregados' },
+        { nome: 'Marcos Vinícius Rocha', funcao: 'Suplente', representacao: 'Empregados' },
+      ],
+    },
+  ]
+  const reuniao = (id: string, dia: number, status: 'Agendada' | 'Realizada', pauta: string, deliberacoes = '') => ({
+    id, cipaId: 'cp1', data: d(dia), hora: '14:00', tipo: 'Ordinária', local: 'Sala de reuniões', pauta, deliberacoes,
+    presentes: status === 'Realizada' ? ['Paulo Henrique', 'Fernanda Oliveira', 'Patrícia Gomes', 'Diego Santos'] : [], status,
+  })
+  const reunioes = [
+    reuniao('rc1', -40, 'Realizada', 'Análise do incidente da doca 2; andamento das proteções da prensa 3', 'Demarcar corredores da doca 2 em 10 dias; cobrar cronograma da cortina de luz.'),
+    reuniao('rc2', -10, 'Realizada', 'Acidente na caldeiraria (projeção nos olhos); campanha de uso de óculos', 'Trocar óculos por ampla visão na caldeiraria; DDS sobre proteção dos olhos.'),
+    reuniao('rc3', 20, 'Agendada', 'Mapa de riscos atualizado; preparação da SIPAT'),
+  ]
+
   return {
-    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs, pts, requisitos, modelos: [],
+    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs, pts, requisitos, modelos: [], extintores, riscos, cipas, reunioes,
     config: { ...configPadrao(), tecnico: 'Técnico(a) de Segurança (demo)' },
   }
 }

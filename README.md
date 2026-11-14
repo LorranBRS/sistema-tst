@@ -28,6 +28,10 @@ SaaS web para o dia a dia do **Técnico de Segurança do Trabalho**: EPIs, trein
 | **Permissão de Trabalho** | PT de altura, trabalho a quente, espaço confinado (com medição de gases), eletricidade e escavação, vinculada à APR |
 | **Investigação** | 5 porquês, causas 6M (Ishikawa), causa raiz e geração de ações a partir da ocorrência |
 | **Matriz de treinamentos** | Cursos obrigatórios por função e situação de cada colaborador (em dia, a vencer, vencido, falta) |
+| **Agenda** | Calendário com vencimentos, prazos, inspeções, DDS, PTs e reuniões da CIPA; exporta para Google Agenda/Outlook (.ics) |
+| **Extintores** | Recarga (anual), teste hidrostático (5 anos) e inspeção mensal com geração de ações |
+| **Inventário de riscos (PGR)** | Perigos por setor/função (NR-1), matriz 5×5, medidas, geração de ações e impressão do inventário |
+| **CIPA** | Gestão e mandato, membros, calendário de reuniões mensais e atas com assinatura |
 | **Relatório mensal** | Indicadores, TF/TG do mês e do ano, ocorrências, inspeções, treinamentos, DDS, plano de ação e pendências |
 | **Configurações** | Perfil do técnico, seu logo, cor do sistema, antecedência dos alertas, tema claro/escuro, backup/importação |
 

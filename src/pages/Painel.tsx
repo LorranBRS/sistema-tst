@@ -61,6 +61,10 @@ export default function Painel() {
     ...treinos.filter((t) => situacao(t.validade, alerta) !== 'ok' && t.validade).map((t) => ({ tipo: 'Treinamento', titulo: t.curso, sub: nomes.colaborador(d, t.colaboradorId), data: t.validade, rota: '/app/treinamentos' })),
     ...asos.filter((a) => situacao(a.validade, alerta) !== 'ok').map((a) => ({ tipo: 'ASO', titulo: 'Exame periódico', sub: nomes.colaborador(d, a.colaboradorId), data: a.validade, rota: '/app/asos' })),
     ...d.epis.filter((e) => e.validadeCa && situacao(e.validadeCa, alerta) !== 'ok').map((e) => ({ tipo: 'CA de EPI', titulo: `${e.nome}`, sub: `CA ${e.ca}`, data: e.validadeCa, rota: '/app/epis' })),
+    ...daEmpresaAtiva(d, d.extintores).filter((x) => x.status === 'Em uso').flatMap((x) => [
+      ...(x.proximaRecarga && situacao(x.proximaRecarga, alerta) !== 'ok' ? [{ tipo: 'Extintor', titulo: `Recarga do extintor ${x.numero}`, sub: x.local, data: x.proximaRecarga, rota: '/app/extintores' }] : []),
+      ...(x.proximoTeste && situacao(x.proximoTeste, alerta) !== 'ok' ? [{ tipo: 'Extintor', titulo: `Teste hidrostático ${x.numero}`, sub: x.local, data: x.proximoTeste, rota: '/app/extintores' }] : []),
+    ]),
     ...doColab(d.entregas).filter((e) => situacao(e.proximaTroca, 7) !== 'ok').map((e) => ({ tipo: 'Troca de EPI', titulo: nomes.epi(d, e.epiId), sub: nomes.colaborador(d, e.colaboradorId), data: e.proximaTroca, rota: '/app/entregas' })),
   ].sort((a, b) => a.data.localeCompare(b.data))
 

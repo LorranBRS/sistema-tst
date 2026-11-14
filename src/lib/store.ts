@@ -15,6 +15,11 @@ function carregar(): DB {
       const dados = JSON.parse(bruto)
       const base = dbVazio()
       // Migração da v1.0: quem ainda usa os dados de demonstração ganha os exemplos dos módulos novos
+      // v1.4: extintores, riscos e CIPA de exemplo para quem usa a demonstração
+      if (dados.extintores === undefined && Array.isArray(dados.empresas) && dados.empresas.some((e: { id: string }) => e.id === 'e1')) {
+        const demo = dbDemo()
+        Object.assign(dados, { extintores: demo.extintores, riscos: demo.riscos, cipas: demo.cipas, reunioes: demo.reunioes })
+      }
       if (dados.requisitos === undefined && Array.isArray(dados.empresas) && dados.empresas.some((e: { id: string }) => e.id === 'e1')) {
         const demo = dbDemo()
         dados.pts = demo.pts

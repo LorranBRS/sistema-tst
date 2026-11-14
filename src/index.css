@@ -122,7 +122,7 @@ svg { flex-shrink: 0; }
 /* ---------- Componentes ---------- */
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
 .card-pad { padding: 18px 20px; }
-.card-head { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+.card-head { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
 .card-head h3 { font-size: 15px; }
 .card-head .link { margin-left: auto; font-size: 13px; }
 
@@ -401,3 +401,35 @@ a.stat:hover { text-decoration: none; border-color: var(--primary); }
 .lista-assinaturas .ass .nome { font-weight: 600; font-size: 13px; }
 .lista-assinaturas .ass .quando { font-size: 11px; color: #666; }
 .lista-assinaturas .ass button { position: absolute; top: 4px; right: 4px; }
+
+/* Matriz de risco do PGR */
+.matriz { display: flex; gap: 6px; align-items: center; }
+.matriz .eixo-y { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 11px; color: var(--muted); }
+.matriz .grade { display: grid; gap: 3px; }
+.matriz .linha-m { display: flex; gap: 3px; }
+.matriz .cel { width: 34px; height: 30px; display: grid; place-items: center; border-radius: 5px; padding: 0; }
+.matriz .rot { width: 34px; text-align: center; font-size: 11px; color: var(--muted); line-height: 30px; }
+.matriz .linha-m .rot:first-child { width: 14px; }
+.matriz .eixo-x { text-align: center; font-size: 11px; color: var(--muted); padding-left: 17px; }
+
+/* Agenda */
+.agenda-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; background: var(--border); border-top: 1px solid var(--border); }
+.cal-sem { background: var(--surface-2); text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); padding: 6px 0; text-transform: uppercase; }
+.cal-dia { background: var(--surface); min-height: 92px; border: none; padding: 4px 4px 6px; text-align: left; display: flex; flex-direction: column; gap: 3px; cursor: pointer; min-width: 0; }
+.cal-dia:hover { background: var(--surface-2); }
+.cal-dia.vazio-cal { cursor: default; background: var(--surface-2); }
+.cal-dia .num-dia { font-size: 12px; font-weight: 600; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; }
+.cal-dia.hoje .num-dia { background: var(--primary); color: #fff; }
+.cal-dia.sel { box-shadow: inset 0 0 0 2px var(--primary); }
+.cal-evs { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cal-ev { display: block; border-radius: 4px; padding: 1px 5px; color: #fff; font-size: 11px; line-height: 16px; min-width: 0; }
+.cal-ev-txt { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-mais { font-size: 11px; color: var(--muted); padding-left: 4px; }
+@media (max-width: 1100px) { .agenda-grid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) {
+  .cal-dia { min-height: 54px; padding: 3px 2px; align-items: center; }
+  .cal-evs { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 2px; }
+  .cal-ev { width: 7px; height: 7px; padding: 0; border-radius: 50%; }
+  .cal-ev-txt, .cal-mais { display: none; }
+}

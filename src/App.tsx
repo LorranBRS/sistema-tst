@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import {
   AlertTriangle, Building2, Calculator, ClipboardCheck, FileWarning, GraduationCap, HardHat, LayoutDashboard, ListTodo, Menu,
-  MessagesSquare, Moon, Download, WifiOff, Palette, Check, FileBarChart, FileCheck2, Grid3x3, PackageCheck, Sun, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
+  MessagesSquare, Moon, CalendarDays, FireExtinguisher, ShieldAlert, UsersRound, Download, WifiOff, Palette, Check, FileBarChart, FileCheck2, Grid3x3, PackageCheck, Sun, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
 } from 'lucide-react'
 import { Link, ToastHost, useRota } from './components/ui'
 import { Pagina, PaginaDds, cfgAcoes, cfgAsos, cfgColaboradores, cfgEmpresas, cfgEntregas, cfgEpis, cfgOcorrencias, cfgTreinamentos } from './pages/cadastros'
@@ -13,6 +13,10 @@ import Investigacao from './pages/Investigacao'
 import Matriz, { pendenciasMatriz } from './pages/Matriz'
 import Relatorio from './pages/Relatorio'
 import PresencaDds from './pages/PresencaDds'
+import Extintores, { inspecaoAtrasada } from './pages/Extintores'
+import Riscos, { ImprimirInventario } from './pages/Riscos'
+import Cipa, { ReuniaoCipaPagina } from './pages/Cipa'
+import Agenda from './pages/Agenda'
 import FichaEpi from './pages/FichaEpi'
 import Calculadoras from './pages/Calculadoras'
 import Nrs from './pages/Nrs'
@@ -47,7 +51,13 @@ interface ItemMenu {
 }
 
 const MENU: { grupo: string; itens: ItemMenu[] }[] = [
-  { grupo: '', itens: [{ rota: '/app', nome: 'Painel', icone: <LayoutDashboard size={18} />, pagina: () => <Painel /> }] },
+  {
+    grupo: '',
+    itens: [
+      { rota: '/app', nome: 'Painel', icone: <LayoutDashboard size={18} />, pagina: () => <Painel /> },
+      { rota: '/app/agenda', nome: 'Agenda', icone: <CalendarDays size={18} />, pagina: () => <Agenda /> },
+    ],
+  },
   {
     grupo: 'Cadastros',
     itens: [
@@ -62,6 +72,7 @@ const MENU: { grupo: string; itens: ItemMenu[] }[] = [
       { rota: '/app/entregas', nome: 'Entregas de EPI', icone: <PackageCheck size={18} />, pagina: () => <Entregas /> },
       { rota: '/app/treinamentos', nome: 'Treinamentos', icone: <GraduationCap size={18} />, pagina: () => <Treinamentos />, contador: (d) => contarVencidosUltimos(d, 'treinamentos') },
       { rota: '/app/matriz', nome: 'Matriz de treinamentos', icone: <Grid3x3 size={18} />, pagina: () => <Matriz />, contador: (d) => pendenciasMatriz(d) },
+      { rota: '/app/extintores', nome: 'Extintores', icone: <FireExtinguisher size={18} />, pagina: () => <Extintores />, contador: (d) => daEmpresaAtiva(d, d.extintores).filter((x) => x.status === 'Em uso' && ((x.proximaRecarga && diasAte(x.proximaRecarga) < 0) || (x.proximoTeste && diasAte(x.proximoTeste) < 0) || inspecaoAtrasada(x))).length },
       { rota: '/app/asos', nome: 'ASOs e exames', icone: <Stethoscope size={18} />, pagina: () => <Asos />, contador: (d) => contarVencidosUltimos(d, 'asos') },
     ],
   },
@@ -79,6 +90,8 @@ const MENU: { grupo: string; itens: ItemMenu[] }[] = [
     itens: [
       { rota: '/app/ocorrencias', nome: 'Ocorrências', icone: <AlertTriangle size={18} />, pagina: () => <Ocorrencias /> },
       { rota: '/app/acoes', nome: 'Plano de ação', icone: <ListTodo size={18} />, pagina: () => <Acoes />, contador: (d) => daEmpresaAtiva(d, d.acoes).filter((a) => a.status !== 'Concluída' && diasAte(a.quando) < 0).length },
+      { rota: '/app/pgr', nome: 'Inventário de riscos', icone: <ShieldAlert size={18} />, pagina: () => <Riscos /> },
+      { rota: '/app/cipa', nome: 'CIPA', icone: <UsersRound size={18} />, pagina: () => <Cipa /> },
       { rota: '/app/relatorios', nome: 'Relatório mensal', icone: <FileBarChart size={18} />, pagina: () => <Relatorio /> },
     ],
   },
@@ -109,6 +122,8 @@ function resolverPagina(rota: string): { ativo: string; conteudo: ReactNode } {
   const partes = rota.split('/').filter(Boolean) // ['app', 'inspecoes', 'id']
   if (partes[1] === 'inspecoes' && partes[2]) return { ativo: '/app/inspecoes', conteudo: <ExecutarInspecao id={partes[2]} /> }
   if (partes[1] === 'apr' && partes[2]) return { ativo: '/app/apr', conteudo: <EditarApr id={partes[2]} /> }
+  if (partes[1] === 'pgr' && partes[2] === 'imprimir') return { ativo: '/app/pgr', conteudo: <ImprimirInventario /> }
+  if (partes[1] === 'cipa' && partes[2] === 'reuniao' && partes[3]) return { ativo: '/app/cipa', conteudo: <ReuniaoCipaPagina id={partes[3]} /> }
   if (partes[1] === 'dds' && partes[2]) return { ativo: '/app/dds', conteudo: <PresencaDds id={partes[2]} /> }
   if (partes[1] === 'pt' && partes[2]) return { ativo: '/app/pt', conteudo: <EditarPt id={partes[2]} /> }
   if (partes[1] === 'investigacao' && partes[2]) return { ativo: '/app/ocorrencias', conteudo: <Investigacao id={partes[2]} /> }
@@ -172,7 +187,7 @@ export default function App() {
             })}
           </nav>
         ))}
-        <div className="sidebar-foot">Dados salvos neste navegador · v1.3</div>
+        <div className="sidebar-foot">Dados salvos neste navegador · v1.4</div>
       </aside>
       {menuAberto && <div onClick={() => setMenuAberto(false)} style={{ position: 'fixed', inset: 0, zIndex: 55 }} />}
       <div className="main">
