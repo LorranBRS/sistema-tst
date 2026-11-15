@@ -87,6 +87,7 @@ export interface Ocorrencia {
   cat: string
   status: string
   investigacao?: Investigacao
+  fotos?: string[]
 }
 
 export interface Investigacao {
@@ -279,6 +280,52 @@ export interface MapaRisco {
   posicoes: Record<string, { x: number; y: number }>
 }
 
+export interface DocEntregue {
+  tipo: string
+  validade: string // vazio = documento sem validade
+}
+
+export interface Contratada {
+  id: ID
+  empresaId: ID
+  nome: string
+  cnpj: string
+  servico: string
+  responsavel: string
+  telefone: string
+  contratoFim: string
+  docsExigidosEmpresa: string[]
+  docsExigidosTrab: string[]
+  docs: DocEntregue[]
+}
+
+export interface Terceiro {
+  id: ID
+  contratadaId: ID
+  nome: string
+  funcao: string
+  documento: string
+  ativo: boolean
+  docs: DocEntregue[]
+}
+
+export interface Quimico {
+  id: ID
+  empresaId: ID
+  nome: string
+  fabricante: string
+  cas: string
+  onu: string
+  local: string
+  quantidade: string
+  ghs: string[]
+  dataFds: string
+  linkFds: string
+  epis: string
+  armazenamento: string
+  primeirosSocorros: string
+}
+
 export interface Requisito {
   id: ID
   funcao: string
@@ -318,6 +365,7 @@ export interface ItemInspecao {
   texto: string
   resposta: Resposta
   obs: string
+  fotos?: string[]
 }
 
 export interface Inspecao {
@@ -394,6 +442,9 @@ export interface DB {
   simulados: Simulado[]
   ordens: OrdemServico[]
   mapas: MapaRisco[]
+  contratadas: Contratada[]
+  terceiros: Terceiro[]
+  quimicos: Quimico[]
   config: Config
 }
 

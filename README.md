@@ -36,6 +36,10 @@ SaaS web para o dia a dia do **Técnico de Segurança do Trabalho**: EPIs, trein
 | **Brigada e simulados** | Brigadistas por setor/turno com situação do treinamento; simulados com tempo de abandono x meta, pontos de melhoria e relatório |
 | **Ordens de serviço** | OS por função (NR-1) montada com os riscos do inventário, EPIs e treinamentos da matriz; ciência assinada na tela |
 | **Mapa de riscos** | Planta/croqui do setor com círculos por tipo (cor) e grau (tamanho), gerados do inventário, para imprimir e afixar |
+| **Indicadores** | Gráficos do ano: ocorrências por mês, TF/TG mês a mês, conformidade das inspeções, tipos de ocorrência, partes do corpo, ações, horas de treinamento e comparativo entre empresas |
+| **Terceiros** | Contratadas e seus trabalhadores com documentos exigidos e validade; mostra quem está liberado ou bloqueado e imprime a lista para a portaria |
+| **Produtos químicos** | Inventário com FDS, pictogramas GHS, EPIs e armazenamento; alerta de produtos incompatíveis no mesmo local |
+| **Fotos** | Fotos pelo celular nas não conformidades das inspeções e nas ocorrências, guardadas no aparelho (IndexedDB) e incluídas no backup |
 | **Relatório mensal** | Indicadores, TF/TG do mês e do ano, ocorrências, inspeções, treinamentos, DDS, plano de ação e pendências |
 | **Configurações** | Perfil do técnico, seu logo, cor do sistema, antecedência dos alertas, tema claro/escuro, backup/importação |
 

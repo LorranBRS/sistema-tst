@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { CORES } from '../lib/catalogos'
 import { db, useDB } from '../lib/store'
 import { baixarArquivo, hoje } from '../lib/utils'
+import { restaurarFotos, todasFotos } from '../lib/fotos'
 
 export default function Configuracoes() {
   const d = useDB()
@@ -18,7 +19,10 @@ export default function Configuracoes() {
     r.onload = () => {
       try {
         if (!confirm('Importar este backup vai substituir todos os dados atuais. Continuar?')) return
-        db.importar(String(r.result))
+        const texto = String(r.result)
+        db.importar(texto)
+        const fotos = JSON.parse(texto)?.fotos
+        if (fotos && typeof fotos === 'object') restaurarFotos(fotos).catch(() => alert('Os dados foram importados, mas algumas fotos não puderam ser restauradas.'))
         toast('Backup importado com sucesso')
       } catch (e) {
         alert('Não foi possível importar: ' + (e as Error).message)
@@ -94,7 +98,13 @@ export default function Configuracoes() {
             informações ou para levar os dados a outro computador.
           </p>
           <div style={{ display: 'grid', gap: 10 }}>
-            <button className="btn" onClick={() => { baixarArquivo(`sistema-tst-backup-${hoje()}.json`, db.exportar(), 'application/json'); toast('Backup gerado') }}>
+            <button className="btn" onClick={async () => {
+              let fotos: Record<string, string> = {}
+              try { fotos = await todasFotos() } catch { /* navegador sem IndexedDB */ }
+              const json = JSON.stringify({ ...JSON.parse(db.exportar()), fotos })
+              baixarArquivo(`sistema-tst-backup-${hoje()}.json`, json, 'application/json')
+              toast(`Backup gerado${Object.keys(fotos).length ? ` com ${Object.keys(fotos).length} foto(s)` : ''}`)
+            }}>
               <Download size={16} /> Baixar backup (.json)
             </button>
             <button className="btn" onClick={() => arquivo.current?.click()}>

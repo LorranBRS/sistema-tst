@@ -21,6 +21,7 @@ export const CATEGORIAS: { nome: string; cor: string }[] = [
   { nome: 'Ação', cor: '#0891b2' },
   { nome: 'Inspeção', cor: '#16a34a' },
   { nome: 'CIPA', cor: '#db2777' },
+  { nome: 'Terceiros', cor: '#0d9488' },
   { nome: 'DDS / PT', cor: '#64748b' },
 ]
 export const corDa = (c: string) => CATEGORIAS.find((x) => x.nome === c)?.cor ?? '#64748b'
@@ -67,6 +68,12 @@ export function gerarEventos(d: DB): Evento[] {
   }
   for (const s of daEmpresaAtiva(d, d.simulados))
     ev.push({ data: s.data, categoria: 'Inspeção', titulo: `Simulado: ${s.tipo}`, sub: s.cenario, rota: '/app/simulados/' + s.id, concluido: s.data <= hoje() })
+  for (const c of daEmpresaAtiva(d, d.contratadas)) {
+    if (c.contratoFim) ev.push({ data: c.contratoFim, categoria: 'Terceiros', titulo: `Fim do contrato: ${c.nome}`, sub: c.servico, rota: '/app/terceiros/' + c.id })
+    for (const doc of c.docs) if (doc.validade && c.docsExigidosEmpresa.includes(doc.tipo)) ev.push({ data: doc.validade, categoria: 'Terceiros', titulo: `${doc.tipo} – ${c.nome}`, sub: 'Documento da contratada', rota: '/app/terceiros/' + c.id })
+    for (const t of d.terceiros.filter((t) => t.contratadaId === c.id && t.ativo))
+      for (const doc of t.docs) if (doc.validade && c.docsExigidosTrab.includes(doc.tipo)) ev.push({ data: doc.validade, categoria: 'Terceiros', titulo: `${doc.tipo} – ${t.nome}`, sub: c.nome, rota: '/app/terceiros/' + c.id })
+  }
   const cipas = daEmpresaAtiva(d, d.cipas)
   for (const c of cipas) ev.push({ data: c.fim, categoria: 'CIPA', titulo: `Fim do mandato da CIPA ${c.gestao}`, sub: nomes.empresa(d, c.empresaId), rota: '/app/cipa' })
   const idsCipa = new Set(cipas.map((c) => c.id))

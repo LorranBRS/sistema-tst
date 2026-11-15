@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import {
   AlertTriangle, Building2, Calculator, ClipboardCheck, FileWarning, GraduationCap, HardHat, LayoutDashboard, ListTodo, Menu,
-  MessagesSquare, Moon, Wrench, Siren, Timer, Map as MapIcon, FileSignature, CalendarDays, FireExtinguisher, ShieldAlert, UsersRound, Download, WifiOff, Palette, Check, FileBarChart, FileCheck2, Grid3x3, PackageCheck, Sun, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
+  MessagesSquare, Moon, FlaskConical, BadgeCheck, BarChart3, Wrench, Siren, Timer, Map as MapIcon, FileSignature, CalendarDays, FireExtinguisher, ShieldAlert, UsersRound, Download, WifiOff, Palette, Check, FileBarChart, FileCheck2, Grid3x3, PackageCheck, Sun, Settings, ShieldCheck, Stethoscope, BookOpen, Users,
 } from 'lucide-react'
 import { Link, ToastHost, useRota } from './components/ui'
 import { Pagina, PaginaDds, cfgAcoes, cfgAsos, cfgColaboradores, cfgEmpresas, cfgEntregas, cfgEpis, cfgOcorrencias, cfgTreinamentos } from './pages/cadastros'
@@ -21,6 +21,9 @@ import Equipamentos, { pendenciaEquip } from './pages/Equipamentos'
 import { Brigada, RelatorioSimulado, Simulados } from './pages/Brigada'
 import Ordens, { EditarOrdem } from './pages/OrdemServico'
 import MapaRiscos from './pages/MapaRiscos'
+import Terceiros, { DetalheContratada, avaliar } from './pages/Terceiros'
+import Quimicos, { ImprimirQuimicos, conflitos } from './pages/Quimicos'
+import Indicadores from './pages/Indicadores'
 import FichaEpi from './pages/FichaEpi'
 import Calculadoras from './pages/Calculadoras'
 import Nrs from './pages/Nrs'
@@ -77,6 +80,7 @@ const MENU: { grupo: string; itens: ItemMenu[] }[] = [
       { rota: '/app/treinamentos', nome: 'Treinamentos', icone: <GraduationCap size={18} />, pagina: () => <Treinamentos />, contador: (d) => contarVencidosUltimos(d, 'treinamentos') },
       { rota: '/app/matriz', nome: 'Matriz de treinamentos', icone: <Grid3x3 size={18} />, pagina: () => <Matriz />, contador: (d) => pendenciasMatriz(d) },
       { rota: '/app/equipamentos', nome: 'Equipamentos', icone: <Wrench size={18} />, pagina: () => <Equipamentos />, contador: (d) => daEmpresaAtiva(d, d.equipamentos).filter((x) => pendenciaEquip(x, d.config.alertaDias) === 'vencido').length },
+      { rota: '/app/quimicos', nome: 'Produtos químicos', icone: <FlaskConical size={18} />, pagina: () => <Quimicos />, contador: (d) => conflitos(daEmpresaAtiva(d, d.quimicos)).length },
       { rota: '/app/asos', nome: 'ASOs e exames', icone: <Stethoscope size={18} />, pagina: () => <Asos />, contador: (d) => contarVencidosUltimos(d, 'asos') },
     ],
   },
@@ -105,7 +109,9 @@ const MENU: { grupo: string; itens: ItemMenu[] }[] = [
       { rota: '/app/pgr', nome: 'Inventário de riscos', icone: <ShieldAlert size={18} />, pagina: () => <Riscos /> },
       { rota: '/app/mapa', nome: 'Mapa de riscos', icone: <MapIcon size={18} />, pagina: () => <MapaRiscos /> },
       { rota: '/app/os', nome: 'Ordens de serviço', icone: <FileSignature size={18} />, pagina: () => <Ordens /> },
+      { rota: '/app/terceiros', nome: 'Terceiros', icone: <BadgeCheck size={18} />, pagina: () => <Terceiros />, contador: (d) => daEmpresaAtiva(d, d.contratadas).reduce((n, c) => n + d.terceiros.filter((t) => t.contratadaId === c.id && t.ativo && !avaliar(c, t, d.config.alertaDias).liberado).length, 0) },
       { rota: '/app/cipa', nome: 'CIPA', icone: <UsersRound size={18} />, pagina: () => <Cipa /> },
+      { rota: '/app/indicadores', nome: 'Indicadores', icone: <BarChart3 size={18} />, pagina: () => <Indicadores /> },
       { rota: '/app/relatorios', nome: 'Relatório mensal', icone: <FileBarChart size={18} />, pagina: () => <Relatorio /> },
     ],
   },
@@ -136,6 +142,8 @@ function resolverPagina(rota: string): { ativo: string; conteudo: ReactNode } {
   const partes = rota.split('/').filter(Boolean) // ['app', 'inspecoes', 'id']
   if (partes[1] === 'inspecoes' && partes[2]) return { ativo: '/app/inspecoes', conteudo: <ExecutarInspecao id={partes[2]} /> }
   if (partes[1] === 'apr' && partes[2]) return { ativo: '/app/apr', conteudo: <EditarApr id={partes[2]} /> }
+  if (partes[1] === 'terceiros' && partes[2]) return { ativo: '/app/terceiros', conteudo: <DetalheContratada id={partes[2]} /> }
+  if (partes[1] === 'quimicos' && partes[2] === 'imprimir') return { ativo: '/app/quimicos', conteudo: <ImprimirQuimicos /> }
   if (partes[1] === 'os' && partes[2]) return { ativo: '/app/os', conteudo: <EditarOrdem id={partes[2]} /> }
   if (partes[1] === 'simulados' && partes[2]) return { ativo: '/app/simulados', conteudo: <RelatorioSimulado id={partes[2]} /> }
   if (partes[1] === 'pgr' && partes[2] === 'imprimir') return { ativo: '/app/pgr', conteudo: <ImprimirInventario /> }
@@ -203,7 +211,7 @@ export default function App() {
             })}
           </nav>
         ))}
-        <div className="sidebar-foot">Dados salvos neste navegador · v1.5</div>
+        <div className="sidebar-foot">Dados salvos neste navegador · v1.6</div>
       </aside>
       {menuAberto && <div onClick={() => setMenuAberto(false)} style={{ position: 'fixed', inset: 0, zIndex: 55 }} />}
       <div className="main">

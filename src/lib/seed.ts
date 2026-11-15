@@ -2,7 +2,7 @@
 // para o painel sempre mostrar vencimentos e alertas realistas.
 import type { DB, Config, Ocorrencia } from './types'
 import { addDias, addMeses, hoje } from './utils'
-import { ESCALA_PROB, ESCALA_SEV, MODELOS_INSPECAO, TIPOS_PT } from './catalogos'
+import { ESCALA_PROB, ESCALA_SEV, MODELOS_INSPECAO, TIPOS_PT, rotuloGhs } from './catalogos'
 
 export const configPadrao = (): Config => ({
   tecnico: 'Técnico(a) de Segurança',
@@ -38,6 +38,9 @@ export const dbVazio = (): DB => ({
   simulados: [],
   ordens: [],
   mapas: [],
+  contratadas: [],
+  terceiros: [],
+  quimicos: [],
   config: configPadrao(),
 })
 
@@ -299,8 +302,37 @@ export function dbDemo(): DB {
     },
   ]
 
+  const contratadas = [
+    {
+      id: 'ct1', empresaId: 'e1', nome: 'Andaimes Rápidos Ltda (demo)', cnpj: '11.222.333/0001-44', servico: 'Montagem e locação de andaimes', responsavel: 'Sérgio Matos', telefone: '(11) 4000-3000', contratoFim: d(150),
+      docsExigidosEmpresa: ['PGR', 'PCMSO', 'Seguro de vida em grupo'], docsExigidosTrab: ['ASO', 'Integração de segurança', 'NR-35', 'Ficha de EPI'],
+      docs: [{ tipo: 'PGR', validade: d(200) }, { tipo: 'PCMSO', validade: d(200) }, { tipo: 'Seguro de vida em grupo', validade: d(12) }],
+    },
+    {
+      id: 'ct2', empresaId: 'e2', nome: 'Elétrica Forte Serviços (demo)', cnpj: '55.666.777/0001-88', servico: 'Manutenção elétrica de painéis', responsavel: 'Renata Lopes', telefone: '(11) 4000-4000', contratoFim: d(60),
+      docsExigidosEmpresa: ['PGR', 'PCMSO', 'ART / responsável técnico'], docsExigidosTrab: ['ASO', 'Integração de segurança', 'NR-10'],
+      docs: [{ tipo: 'PGR', validade: d(300) }, { tipo: 'PCMSO', validade: d(-15) }, { tipo: 'ART / responsável técnico', validade: '' }],
+    },
+  ]
+  const terceiros = [
+    { id: 'tc1', contratadaId: 'ct1', nome: 'Wellington Prado', funcao: 'Montador de andaimes', documento: 'RG 12.345.678-9', ativo: true, docs: [{ tipo: 'ASO', validade: d(200) }, { tipo: 'Integração de segurança', validade: d(300) }, { tipo: 'NR-35', validade: d(400) }, { tipo: 'Ficha de EPI', validade: '' }] },
+    { id: 'tc2', contratadaId: 'ct1', nome: 'Juliano Teixeira', funcao: 'Montador de andaimes', documento: 'RG 23.456.789-0', ativo: true, docs: [{ tipo: 'ASO', validade: d(20) }, { tipo: 'Integração de segurança', validade: d(300) }, { tipo: 'NR-35', validade: d(-30) }, { tipo: 'Ficha de EPI', validade: '' }] },
+    { id: 'tc3', contratadaId: 'ct2', nome: 'Bruno Cardoso', funcao: 'Eletricista', documento: 'RG 34.567.890-1', ativo: true, docs: [{ tipo: 'ASO', validade: d(150) }, { tipo: 'Integração de segurança', validade: d(200) }, { tipo: 'NR-10', validade: d(500) }] },
+    { id: 'tc4', contratadaId: 'ct2', nome: 'Caio Mendes', funcao: 'Ajudante de eletricista', documento: 'RG 45.678.901-2', ativo: true, docs: [{ tipo: 'ASO', validade: d(100) }] },
+  ]
+  const q = (id: string, empresaId: string, nome: string, fabricante: string, cas: string, onu: string, local: string, quantidade: string, ghs: string[], fds: number, epis: string, armazenamento: string) => ({
+    id, empresaId, nome, fabricante, cas, onu, local, quantidade, ghs: ghs.map(rotuloGhs), dataFds: d(fds), linkFds: '', epis, armazenamento, primeirosSocorros: 'Ver seção 4 da FDS.',
+  })
+  const quimicos = [
+    q('qm1', 'e2', 'Thinner (diluente)', 'Fabricante X', '—', '1263', 'Almoxarifado químico', '40 L', ['GHS02', 'GHS07', 'GHS08'], -900, 'Luva nitrílica, óculos, respirador com filtro para vapores orgânicos', 'Local ventilado, longe de fontes de ignição'),
+    q('qm2', 'e2', 'Oxigênio (cilindro)', 'Fabricante Y', '7782-44-7', '1072', 'Almoxarifado químico', '6 cilindros', ['GHS03', 'GHS04'], -400, 'Luva de raspa, óculos', 'Cilindros em pé, acorrentados, separados de inflamáveis'),
+    q('qm3', 'e2', 'Acetileno (cilindro)', 'Fabricante Y', '74-86-2', '1001', 'Caldeiraria', '4 cilindros', ['GHS02', 'GHS04'], -400, 'Luva de raspa, óculos', 'Cilindros em pé, acorrentados'),
+    q('qm4', 'e2', 'Desengraxante alcalino', 'Fabricante Z', '1310-73-2', '1719', 'Estamparia', '20 L', ['GHS05'], -2200, 'Luva de PVC, óculos ampla visão, avental', 'Bacia de contenção'),
+    q('qm5', 'e1', 'Cimento Portland', 'Fabricante W', '65997-15-1', '—', 'Canteiro – depósito', '80 sacos', ['GHS05', 'GHS07'], -600, 'Luva, óculos, respirador PFF2', 'Sobre estrados, local seco'),
+  ]
+
   return {
-    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs, pts, requisitos, modelos: [], extintores, riscos, cipas, reunioes, equipamentos, brigadistas, simulados, ordens, mapas: [],
+    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs, pts, requisitos, modelos: [], extintores, riscos, cipas, reunioes, equipamentos, brigadistas, simulados, ordens, mapas: [], contratadas, terceiros, quimicos,
     config: { ...configPadrao(), tecnico: 'Técnico(a) de Segurança (demo)' },
   }
 }

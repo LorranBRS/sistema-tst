@@ -320,11 +320,12 @@ export const cfgOcorrencias: CrudConfig = {
     { nome: 'cat', rotulo: 'Nº da CAT', tipo: 'text', ajuda: 'Emitir até o 1º dia útil seguinte (imediato em caso de óbito)' },
     { nome: 'status', rotulo: 'Investigação', tipo: 'select', opcoes: ['Em investigação', 'Concluída'], obrigatorio: true },
     { nome: 'descricao', rotulo: 'Descrição do ocorrido', tipo: 'textarea' },
+    { nome: 'fotos', rotulo: 'Fotos do local, do equipamento ou da lesão', tipo: 'fotos', ajuda: 'Ficam guardadas neste aparelho e saem no relatório de investigação' },
   ],
   padroes: () => ({ status: 'Em investigação', tipo: 'Acidente típico', gravidade: 'Sem afastamento' }),
   colunas: [
     { rotulo: 'Data', texto: (r) => fmtData(r.data) },
-    { rotulo: 'Ocorrência', texto: (r) => `${r.tipo} ${r.descricao}`, render: (r) => <div><strong>{r.tipo}</strong><span className="sub">{r.local}</span></div> },
+    { rotulo: 'Ocorrência', texto: (r) => `${r.tipo} ${r.descricao}`, render: (r) => <div><strong>{r.tipo}</strong><span className="sub">{r.local}{r.fotos?.length ? ` · 📷 ${r.fotos.length}` : ''}</span></div> },
     { rotulo: 'Envolvido', texto: (r, d) => (r.colaboradorId ? nomes.colaborador(d, r.colaboradorId) : '—'), esconderMobile: true },
     { rotulo: 'Gravidade', texto: (r) => r.gravidade, render: (r) => <div><BadgeStatus valor={r.gravidade} />{r.diasPerdidos > 0 && <span className="sub">{r.diasPerdidos} dias perdidos</span>}</div> },
     {

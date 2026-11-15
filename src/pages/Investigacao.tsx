@@ -1,5 +1,6 @@
 // Investigação de acidente/incidente: 5 porquês + causas por categoria (6M) + causa raiz.
 import { ArrowLeft, CheckCheck, ListPlus, Plus, Printer, Trash2 } from 'lucide-react'
+import { Fotos } from '../components/Fotos'
 import { BlocoAssinatura } from '../components/Assinatura'
 import { BadgeStatus, Campo, Link, PageHead, Vazio, toast, CabecalhoDoc } from '../components/ui'
 import { CATEGORIAS_6M } from '../lib/catalogos'
@@ -82,7 +83,10 @@ export default function Investigacao({ id }: { id: string }) {
             {oc.colaboradorId && <span className="badge">{nomes.colaborador(d, oc.colaboradorId)}</span>}
             {oc.cat && <span className="badge info">CAT {oc.cat}</span>}
           </div>
-          <p style={{ margin: '0 0 14px', color: 'var(--muted)' }}>{oc.descricao || 'Sem descrição registrada.'}</p>
+          <p style={{ margin: '0 0 10px', color: 'var(--muted)' }}>{oc.descricao || 'Sem descrição registrada.'}</p>
+          <div style={{ marginBottom: 14 }}>
+            <Fotos ids={oc.fotos} onChange={(ids) => db.atualizar('ocorrencias', oc.id, { fotos: ids })} />
+          </div>
           <div className="form-grid">
             <Campo label="Início da investigação"><input className="input" type="date" value={inv.dataInicio} onChange={(e) => set({ dataInicio: e.target.value })} /></Campo>
             <Campo label="Testemunhas"><input className="input" value={inv.testemunhas} onChange={(e) => set({ testemunhas: e.target.value })} /></Campo>
@@ -147,6 +151,7 @@ export default function Investigacao({ id }: { id: string }) {
           <div style={{ gridColumn: '1 / -1' }}><b>Equipe:</b> {inv.equipe}</div>
         </div>
         <p className="declaracao"><b>Descrição:</b> {oc.descricao}</p>
+        {oc.fotos && oc.fotos.length > 0 && <Fotos ids={oc.fotos} somenteLeitura />}
         <p className="declaracao"><b>Sequência dos fatos:</b> {inv.sequencia}</p>
         <table>
           <thead><tr><th style={{ width: 50 }}>#</th><th>5 porquês</th></tr></thead>

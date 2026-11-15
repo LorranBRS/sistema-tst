@@ -448,3 +448,47 @@ a.stat:hover { text-decoration: none; border-color: var(--primary); }
 .legenda-mapa i.p { width: 8px; height: 8px; } .legenda-mapa i.m { width: 13px; height: 13px; } .legenda-mapa i.gr { width: 18px; height: 18px; }
 .bolinha { display: inline-block; width: 14px; height: 14px; border-radius: 50%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 @media print { .mapa-area { break-inside: avoid; } .mapa-doc .secao-doc { display: none; } }
+
+/* Fotos */
+.fotos { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.foto-mini { position: relative; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: var(--surface-2); flex-shrink: 0; }
+.foto-mini img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; display: block; }
+.foto-carregando { display: block; width: 100%; height: 100%; background: linear-gradient(90deg, var(--surface-2), var(--border), var(--surface-2)); }
+.foto-remover { position: absolute; top: 3px; right: 3px; border: none; border-radius: 6px; background: rgba(0,0,0,.6); color: #fff; padding: 3px; cursor: pointer; line-height: 0; }
+.foto-add { border: 1px dashed var(--border); border-radius: 8px; background: var(--surface); color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 12px; cursor: pointer; }
+.foto-add:hover { color: var(--primary); border-color: var(--primary); }
+@media print { .fotos .foto-mini { width: 150px !important; height: 112px !important; } }
+
+/* Terceiros */
+.docs-lista { display: grid; gap: 6px; }
+.doc-linha { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 6px 10px; border: 1px solid var(--border); border-radius: 9px; }
+.terceiro { border-bottom: 1px solid var(--border); }
+.terceiro:last-child { border-bottom: none; }
+.terceiro-cab { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 20px; border: none; background: none; cursor: pointer; color: inherit; }
+.terceiro-cab:hover { background: var(--surface-2); }
+.terceiro-corpo { padding: 4px 20px 16px 46px; }
+@media (max-width: 560px) { .terceiro-corpo { padding-left: 16px; } }
+.ghs-lista { display: flex; flex-wrap: wrap; gap: 2px; align-items: center; }
+.ghs { flex-shrink: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+/* Gráficos (indicadores) */
+:root { --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) { --s1: #3987e5; --s2: #d95926; --s3: #199e70; } }
+:root[data-theme='dark'] { --s1: #3987e5; --s2: #d95926; --s3: #199e70; }
+.viz svg { display: block; overflow: visible; }
+.viz-grade { stroke: var(--border); stroke-width: 1; }
+.viz-base { stroke: var(--muted); stroke-width: 1; opacity: .5; }
+.viz-eixo { fill: var(--muted); font-size: 11px; font-family: inherit; }
+.viz-legenda { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
+.viz-legenda i, .viz-tip i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.viz-tip { position: absolute; transform: translate(-50%, calc(-100% - 12px)); background: var(--text); color: var(--bg); font-size: 12px; padding: 6px 9px; border-radius: 8px; pointer-events: none; white-space: nowrap; z-index: 5; box-shadow: 0 4px 14px rgba(0,0,0,.2); }
+.viz-hbar { display: grid; gap: 8px; }
+.viz-hbar-linha { display: grid; grid-template-columns: minmax(90px, 38%) 1fr auto; gap: 10px; align-items: center; font-size: 13px; }
+.viz-hbar-linha .r { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.viz-hbar-linha .trilho { height: 10px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+.viz-hbar-linha .barra { display: block; height: 100%; border-radius: 0 4px 4px 0; min-width: 2px; }
+.viz-hbar-linha .v { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 28px; text-align: right; }
+.viz-vazio { color: var(--muted); font-size: 13px; padding: 20px 0; text-align: center; }
+
+.titulo-graf { font-size: 14.5px; margin-bottom: 10px; }
+@media print { .grid-2 { grid-template-columns: 1fr 1fr; } .card { break-inside: avoid; } }

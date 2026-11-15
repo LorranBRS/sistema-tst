@@ -423,6 +423,35 @@ export const OS_PADRAO = {
   emergencia: 'Em caso de incêndio ou emergência, acionar o alarme, seguir as rotas de fuga sinalizadas e dirigir-se ao ponto de encontro. Em caso de acidente, comunicar imediatamente o superior e o SESMT/brigada.',
 }
 
+/* ---------- Terceiros ---------- */
+export const DOCS_EMPRESA_TERCEIRO = ['PGR', 'PCMSO', 'Cartão CNPJ', 'Contrato de prestação de serviço', 'Seguro de vida em grupo', 'ART / responsável técnico']
+export const DOCS_TRAB_TERCEIRO = ['ASO', 'Integração de segurança', 'Ficha de EPI', 'Ordem de serviço', 'NR-10', 'NR-11', 'NR-12', 'NR-18', 'NR-20', 'NR-33', 'NR-35']
+
+/* ---------- Produtos químicos (GHS) ---------- */
+export const PICTOGRAMAS_GHS: { cod: string; nome: string; simbolo: string }[] = [
+  { cod: 'GHS01', nome: 'Explosivo', simbolo: '💥' },
+  { cod: 'GHS02', nome: 'Inflamável', simbolo: '🔥' },
+  { cod: 'GHS03', nome: 'Oxidante', simbolo: '⭕' },
+  { cod: 'GHS04', nome: 'Gás sob pressão', simbolo: '🛢️' },
+  { cod: 'GHS05', nome: 'Corrosivo', simbolo: '🧪' },
+  { cod: 'GHS06', nome: 'Toxicidade aguda', simbolo: '☠️' },
+  { cod: 'GHS07', nome: 'Irritante / nocivo', simbolo: '❗' },
+  { cod: 'GHS08', nome: 'Perigo à saúde', simbolo: '🫁' },
+  { cod: 'GHS09', nome: 'Perigo ao meio ambiente', simbolo: '🐟' },
+]
+/** Rótulo usado no cadastro ("GHS02 – Inflamável"); o código são os 5 primeiros caracteres. */
+export const rotuloGhs = (cod: string) => {
+  const p = PICTOGRAMAS_GHS.find((x) => x.cod === cod.slice(0, 5))
+  return p ? `${p.cod} – ${p.nome}` : cod
+}
+/** Combinações que não devem ser armazenadas juntas sem segregação (alerta simplificado — confira a seção 7 e 10 da FDS). */
+export const INCOMPATIVEIS: [string, string, string][] = [
+  ['GHS03', 'GHS02', 'oxidantes intensificam a queima de inflamáveis'],
+  ['GHS01', 'GHS02', 'explosivos não devem ficar junto de inflamáveis'],
+  ['GHS01', 'GHS03', 'explosivos não devem ficar junto de oxidantes'],
+  ['GHS03', 'GHS05', 'oxidantes podem reagir com corrosivos'],
+]
+
 /* ---------- CIPA ---------- */
 export const FUNCOES_CIPA = ['Presidente', 'Vice-presidente', 'Secretário(a)', 'Titular', 'Suplente']
 

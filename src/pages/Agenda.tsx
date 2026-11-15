@@ -29,7 +29,7 @@ export default function Agenda() {
   for (const e of eventos) if (e.data.startsWith(mes)) porDia.set(e.data, [...(porDia.get(e.data) ?? []), e])
 
   const doDia = eventos.filter((e) => e.data === dia)
-  const atrasados = eventos.filter((e) => !e.concluido && e.data < hoje() && ['Treinamento', 'ASO', 'EPI', 'Extintor', 'Equipamento', 'Ação'].includes(e.categoria))
+  const atrasados = eventos.filter((e) => !e.concluido && e.data < hoje() && ['Treinamento', 'ASO', 'EPI', 'Extintor', 'Equipamento', 'Terceiros', 'Ação'].includes(e.categoria))
   const proximos = eventos.filter((e) => e.data >= hoje() && diasAte(e.data) <= 30 && !e.concluido)
 
   function exportar() {

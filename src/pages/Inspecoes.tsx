@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowLeft, CheckCheck, ClipboardList, Copy, ListChecks, ListPlus, Pencil, Plus, Printer, Trash2 } from 'lucide-react'
 import { BadgeStatus, CabecalhoDoc, Campo, Link, Modal, PageHead, Vazio, navegar, toast } from '../components/ui'
 import { MODELOS_INSPECAO, type ModeloInspecao } from '../lib/catalogos'
+import { Fotos } from '../components/Fotos'
 import { daEmpresaAtiva, db, nomes, useDB } from '../lib/store'
 import type { DB, Inspecao, ModeloProprio, Resposta } from '../lib/types'
 import { addDias, fmtData, hoje } from '../lib/utils'
@@ -298,6 +299,7 @@ export function ExecutarInspecao({ id }: { id: string }) {
               {(it.resposta === 'NC' || it.obs) && (
                 <input className="input" placeholder="Observação / evidência da não conformidade" value={it.obs} onChange={(e) => responder(i, { obs: e.target.value })} />
               )}
+              {(it.resposta === 'NC' || it.fotos?.length) ? <Fotos ids={it.fotos} onChange={(ids) => responder(i, { fotos: ids })} tamanho={64} /> : null}
             </div>
             <div className="resp" role="group" aria-label={`Resposta do item ${i + 1}`}>
               {(['C', 'NC', 'NA'] as const).map((op) => (

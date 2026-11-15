@@ -6,6 +6,7 @@ import type { ColKey, DB } from '../lib/types'
 import { db, daEmpresaAtiva, useDB } from '../lib/store'
 import { baixarArquivo, gerarCSV, hoje, normalizar } from '../lib/utils'
 import { Campo, CampoLogo, Modal, PageHead, Vazio, toast } from './ui'
+import { Fotos } from './Fotos'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Reg = { id: string; [k: string]: any }
@@ -13,7 +14,7 @@ export type Reg = { id: string; [k: string]: any }
 export interface CampoDef {
   nome: string
   rotulo: string
-  tipo: 'text' | 'number' | 'date' | 'select' | 'textarea' | 'ref' | 'datalist' | 'imagem'
+  tipo: 'text' | 'number' | 'date' | 'select' | 'textarea' | 'ref' | 'datalist' | 'imagem' | 'fotos' | 'multi'
   opcoes?: string[] | ((d: DB) => string[])
   ref?: 'empresas' | 'colaboradores' | 'epis'
   obrigatorio?: boolean
@@ -82,7 +83,7 @@ export function CrudPage({ cfg }: { cfg: CrudConfig }) {
 
   function novo() {
     const base: Reg = { id: '' }
-    for (const c of cfg.campos) base[c.nome] = c.tipo === 'number' ? 0 : c.tipo === 'date' && c.nome === 'data' ? hoje() : ''
+    for (const c of cfg.campos) base[c.nome] = c.tipo === 'number' ? 0 : c.tipo === 'fotos' || c.tipo === 'multi' ? [] : c.tipo === 'date' && c.nome === 'data' ? hoje() : ''
     if (cfg.escopo === 'empresa' && d.config.empresaAtiva) base.empresaId = d.config.empresaAtiva
     Object.assign(base, cfg.padroes?.(d) ?? {})
     setEditando(base)
@@ -242,7 +243,21 @@ function Formulario({ cfg, inicial, onClose }: { cfg: CrudConfig; inicial: Reg; 
           const rot = c.rotulo + (c.obrigatorio ? ' *' : '')
           const val = v[c.nome] ?? ''
           let input: ReactNode
-          if (c.tipo === 'imagem') {
+          if (c.tipo === 'fotos') {
+            input = <Fotos ids={Array.isArray(val) ? val : []} onChange={(ids) => mudar(c.nome, ids)} />
+          } else if (c.tipo === 'multi') {
+            const ops = typeof c.opcoes === 'function' ? c.opcoes(d) : c.opcoes ?? []
+            const sel: string[] = Array.isArray(val) ? val : []
+            input = (
+              <div className="chips">
+                {ops.map((o) => (
+                  <button type="button" key={o} className={'chip' + (sel.includes(o) ? ' ativo' : '')} aria-pressed={sel.includes(o)} onClick={() => mudar(c.nome, sel.includes(o) ? sel.filter((x) => x !== o) : [...sel, o])}>
+                    {o}
+                  </button>
+                ))}
+              </div>
+            )
+          } else if (c.tipo === 'imagem') {
             input = <CampoLogo valor={val} onChange={(v) => mudar(c.nome, v)} />
           } else if (c.tipo === 'textarea') {
             input = <textarea className="input" value={val} placeholder={c.placeholder} onChange={(e) => mudar(c.nome, e.target.value)} />
@@ -293,7 +308,7 @@ function Formulario({ cfg, inicial, onClose }: { cfg: CrudConfig; inicial: Reg; 
             )
           }
           return (
-            <Campo key={c.nome} label={rot} full={c.full || c.tipo === 'textarea' || c.tipo === 'imagem'} ajuda={c.ajuda}>
+            <Campo key={c.nome} label={rot} full={c.full || c.tipo === 'textarea' || c.tipo === 'imagem' || c.tipo === 'fotos' || c.tipo === 'multi'} ajuda={c.ajuda}>
               {input}
             </Campo>
           )
