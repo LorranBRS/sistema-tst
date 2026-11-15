@@ -282,7 +282,7 @@ export const NRS: { n: number; titulo: string; revogada?: boolean; modulo?: { ro
   { n: 32, titulo: 'Segurança e Saúde no Trabalho em Serviços de Saúde' },
   { n: 33, titulo: 'Segurança e Saúde nos Trabalhos em Espaços Confinados', modulo: { rota: '/app/treinamentos', nome: 'Treinamentos' } },
   { n: 34, titulo: 'Condições e Meio Ambiente de Trabalho na Indústria da Construção, Reparação e Desmonte Naval' },
-  { n: 35, titulo: 'Trabalho em Altura', modulo: { rota: '/app/inspecoes', nome: 'Inspeções' } },
+  { n: 35, titulo: 'Trabalho em Altura', modulo: { rota: '/app/equipamentos', nome: 'Equipamentos' } },
   { n: 36, titulo: 'Segurança e Saúde no Trabalho em Empresas de Abate e Processamento de Carnes e Derivados' },
   { n: 37, titulo: 'Segurança e Saúde em Plataformas de Petróleo' },
   { n: 38, titulo: 'Segurança e Saúde no Trabalho nas Atividades de Limpeza Urbana e Manejo de Resíduos Sólidos' },
@@ -396,6 +396,32 @@ export const TIPOS_RISCO = ['Físico', 'Químico', 'Biológico', 'Ergonômico', 
 export const ESCALA_PROB = ['1 – Rara', '2 – Improvável', '3 – Possível', '4 – Provável', '5 – Quase certa']
 export const ESCALA_SEV = ['1 – Insignificante', '2 – Leve', '3 – Moderada', '4 – Grave', '5 – Catastrófica']
 export const CORES_RISCO: Record<string, string> = { Físico: '#16a34a', Químico: '#dc2626', Biológico: '#92400e', Ergonômico: '#ca8a04', Acidente: '#2563eb' }
+
+/* ---------- Equipamentos ---------- */
+export const TIPOS_EQUIPAMENTO: { tipo: string; dias: number }[] = [
+  { tipo: 'Cinturão paraquedista', dias: 30 },
+  { tipo: 'Talabarte', dias: 30 },
+  { tipo: 'Trava-quedas', dias: 30 },
+  { tipo: 'Linha de vida', dias: 30 },
+  { tipo: 'Escada', dias: 90 },
+  { tipo: 'Andaime', dias: 7 },
+  { tipo: 'Detector de gases', dias: 1 },
+  { tipo: 'Dosímetro de ruído', dias: 180 },
+  { tipo: 'Medidor de stress térmico', dias: 180 },
+  { tipo: 'Tripé / guincho de resgate', dias: 30 },
+  { tipo: 'Ferramenta isolada', dias: 90 },
+  { tipo: 'Outro', dias: 30 },
+]
+
+/* ---------- Brigada e simulados ---------- */
+export const TIPOS_SIMULADO = ['Abandono de área', 'Combate a princípio de incêndio', 'Primeiros socorros', 'Resgate em altura', 'Resgate em espaço confinado', 'Vazamento de produto químico']
+
+/* ---------- Ordem de Serviço (textos-padrão editáveis) ---------- */
+export const OS_PADRAO = {
+  obrigacoes: 'Cumprir as normas de segurança e os procedimentos da empresa; usar corretamente os EPIs fornecidos e zelar por sua conservação; participar dos treinamentos e DDS; comunicar imediatamente ao superior qualquer condição de risco, incidente ou acidente; submeter-se aos exames médicos previstos no PCMSO.',
+  proibicoes: 'Executar atividades para as quais não foi treinado ou autorizado; remover ou burlar proteções de máquinas e dispositivos de segurança; trabalhar sob efeito de álcool ou drogas; fumar em locais não permitidos; usar celular durante a operação de máquinas e equipamentos.',
+  emergencia: 'Em caso de incêndio ou emergência, acionar o alarme, seguir as rotas de fuga sinalizadas e dirigir-se ao ponto de encontro. Em caso de acidente, comunicar imediatamente o superior e o SESMT/brigada.',
+}
 
 /* ---------- CIPA ---------- */
 export const FUNCOES_CIPA = ['Presidente', 'Vice-presidente', 'Secretário(a)', 'Titular', 'Suplente']

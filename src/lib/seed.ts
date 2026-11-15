@@ -33,6 +33,11 @@ export const dbVazio = (): DB => ({
   riscos: [],
   cipas: [],
   reunioes: [],
+  equipamentos: [],
+  brigadistas: [],
+  simulados: [],
+  ordens: [],
+  mapas: [],
   config: configPadrao(),
 })
 
@@ -96,6 +101,9 @@ export function dbDemo(): DB {
     tr('t8', 'c7', 'NR-12 Máquinas e equipamentos', -200, 24, 8),
     tr('t9', 'c1', 'NR-35 Trabalho em altura', -30, 24, 8),
     tr('t10', 'c9', 'NR-33 Espaço confinado (autorizado/vigia)', -340, 12, 16),
+    tr('t11', 'c9', 'NR-23 Brigada de incêndio', -90, 12, 16),
+    tr('t12', 'c2', 'NR-23 Brigada de incêndio', -200, 12, 16),
+    tr('t13', 'c8', 'NR-23 Brigada de incêndio', -340, 12, 16),
   ]
 
   const aso = (id: string, colaboradorId: string, tipo: string, data: number, meses = 12, resultado = 'Apto') => ({
@@ -254,8 +262,45 @@ export function dbDemo(): DB {
     reuniao('rc3', 20, 'Agendada', 'Mapa de riscos atualizado; preparação da SIPAT'),
   ]
 
+  const eq = (id: string, empresaId: string, tipo: string, descricao: string, serie: string, local: string, ultima: number, periodo: number, extra: Partial<{ proximaCalibracao: string; fimVidaUtil: string; laudo: string; status: string }> = {}) => ({
+    id, empresaId, tipo, descricao, numeroSerie: serie, fabricante: '', local,
+    ultimaInspecao: d(ultima), periodicidadeDias: periodo, proximaInspecao: d(ultima + periodo),
+    proximaCalibracao: '', fimVidaUtil: '', laudo: '', status: 'Em uso', ...extra,
+  })
+  const equipamentos = [
+    eq('q1', 'e1', 'Cinturão paraquedista', 'Cinturão 3 pontos com talabarte duplo', 'CT-2291', 'Almoxarifado obra', -20, 30, { fimVidaUtil: d(900) }),
+    eq('q2', 'e1', 'Cinturão paraquedista', 'Cinturão 3 pontos', 'CT-2292', 'Almoxarifado obra', -40, 30, { fimVidaUtil: d(700) }),
+    eq('q3', 'e1', 'Talabarte', 'Talabarte duplo com absorvedor', 'TL-0871', 'Equipe de andaimes', -10, 30, { fimVidaUtil: d(400) }),
+    eq('q4', 'e1', 'Escada', 'Escada extensível de fibra 7 m', 'ESC-03', 'Elétrica', -95, 90),
+    eq('q5', 'e2', 'Detector de gases', 'Detector 4 gases (O₂, LEL, H₂S, CO)', 'DG-5521', 'Manutenção', -5, 1, { proximaCalibracao: d(25), laudo: 'Certificado de calibração 1123/2026' }),
+    eq('q6', 'e2', 'Dosímetro de ruído', 'Dosímetro classe 2', 'DS-118', 'SESMT', -60, 180, { proximaCalibracao: d(-8), laudo: 'Certificado 0987/2025' }),
+  ]
+
+  const brigadistas = [
+    { id: 'bg1', colaboradorId: 'c6', funcao: 'Líder', turno: '1º turno', setor: 'Caldeiraria' },
+    { id: 'bg2', colaboradorId: 'c9', funcao: 'Brigadista', turno: '1º turno', setor: 'Manutenção' },
+    { id: 'bg3', colaboradorId: 'c8', funcao: 'Brigadista', turno: '1º turno', setor: 'Logística' },
+    { id: 'bg4', colaboradorId: 'c2', funcao: 'Líder', turno: 'Comercial', setor: 'Elétrica' },
+    { id: 'bg5', colaboradorId: 'c1', funcao: 'Brigadista', turno: 'Comercial', setor: 'Obras' },
+  ]
+  const simulados = [
+    { id: 'sm1', empresaId: 'e2', data: d(-120), tipo: 'Abandono de área', cenario: 'Princípio de incêndio na caldeiraria', local: 'Galpão principal', participantes: 42, tempoAbandono: '04:10', metaTempo: '03:00', pontoEncontro: 'Estacionamento frontal', pontosPositivos: 'Alarme ouvido em todos os setores; brigada atuou rápido.', pontosMelhoria: 'Rota da estamparia obstruída por paletes; dois colaboradores não conheciam o ponto de encontro.', responsavel: 'Técnico de segurança', acoesGeradas: true },
+    { id: 'sm2', empresaId: 'e1', data: d(-30), tipo: 'Primeiros socorros', cenario: 'Queda de trabalhador do andaime (resgate em altura)', local: 'Bloco B', participantes: 14, tempoAbandono: '', metaTempo: '', pontoEncontro: '', pontosPositivos: 'Plano de resgate conhecido pela equipe.', pontosMelhoria: 'Maca de resgate guardada longe da frente de trabalho.', responsavel: 'Técnico de segurança' },
+  ]
+
+  const ordens = [
+    {
+      id: 'os1', empresaId: 'e2', funcao: 'Soldador', revisao: d(-60),
+      atividades: 'Soldagem MIG e eletrodo revestido, corte com maçarico e esmerilhamento de peças na caldeiraria.',
+      epis: 'Máscara de solda com escurecimento automático, avental e mangote de raspa, luvas de vaqueta, perneira, botina, protetor auricular, respirador PFF2',
+      obrigacoes: 'Usar os EPIs durante toda a atividade; inspecionar cabos e mangueiras antes do uso; solicitar PT para trabalho a quente fora da caldeiraria; manter extintor próximo.',
+      proibicoes: 'Soldar próximo a materiais inflamáveis; remover biombos de proteção; usar celular durante a operação de máquinas.',
+      emergencia: 'Em caso de incêndio, acionar o alarme e a brigada; em caso de acidente, comunicar imediatamente o supervisor e o SESMT.',
+    },
+  ]
+
   return {
-    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs, pts, requisitos, modelos: [], extintores, riscos, cipas, reunioes,
+    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs, pts, requisitos, modelos: [], extintores, riscos, cipas, reunioes, equipamentos, brigadistas, simulados, ordens, mapas: [],
     config: { ...configPadrao(), tecnico: 'Técnico(a) de Segurança (demo)' },
   }
 }

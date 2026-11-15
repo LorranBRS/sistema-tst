@@ -208,6 +208,77 @@ export interface ReuniaoCipa {
   assinaturas?: Assinatura[]
 }
 
+export interface InspecaoEquip {
+  data: string
+  aprovado: boolean
+  obs: string
+  responsavel: string
+}
+
+export interface Equipamento {
+  id: ID
+  empresaId: ID
+  tipo: string
+  descricao: string
+  numeroSerie: string
+  fabricante: string
+  local: string
+  ultimaInspecao: string
+  periodicidadeDias: number
+  proximaInspecao: string
+  proximaCalibracao: string
+  fimVidaUtil: string
+  laudo: string
+  status: string
+  inspecoes?: InspecaoEquip[]
+}
+
+export interface Brigadista {
+  id: ID
+  colaboradorId: ID
+  funcao: string
+  turno: string
+  setor: string
+}
+
+export interface Simulado {
+  id: ID
+  empresaId: ID
+  data: string
+  tipo: string
+  cenario: string
+  local: string
+  participantes: number
+  tempoAbandono: string
+  metaTempo: string
+  pontoEncontro: string
+  pontosPositivos: string
+  pontosMelhoria: string
+  responsavel: string
+  acoesGeradas?: boolean
+}
+
+export interface OrdemServico {
+  id: ID
+  empresaId: ID
+  funcao: string
+  atividades: string
+  epis: string
+  obrigacoes: string
+  proibicoes: string
+  emergencia: string
+  revisao: string
+  assinaturas?: Assinatura[]
+}
+
+export interface MapaRisco {
+  id: ID
+  empresaId: ID
+  setor: string
+  planta?: string
+  posicoes: Record<string, { x: number; y: number }>
+}
+
 export interface Requisito {
   id: ID
   funcao: string
@@ -318,6 +389,11 @@ export interface DB {
   riscos: Risco[]
   cipas: Cipa[]
   reunioes: ReuniaoCipa[]
+  equipamentos: Equipamento[]
+  brigadistas: Brigadista[]
+  simulados: Simulado[]
+  ordens: OrdemServico[]
+  mapas: MapaRisco[]
   config: Config
 }
 

@@ -433,3 +433,18 @@ a.stat:hover { text-decoration: none; border-color: var(--primary); }
   .cal-ev { width: 7px; height: 7px; padding: 0; border-radius: 50%; }
   .cal-ev-txt, .cal-mais { display: none; }
 }
+
+/* Mapa de riscos */
+.mapa-area { position: relative; width: 100%; aspect-ratio: 16 / 10; border: 1px solid #bbb; border-radius: 8px; background-color: #fff; background-size: contain; background-position: center; background-repeat: no-repeat; overflow: hidden; touch-action: none; user-select: none; margin: 8px 0 12px; }
+.mapa-area.sem-planta { background-image: linear-gradient(#eef1ef 1px, transparent 1px), linear-gradient(90deg, #eef1ef 1px, transparent 1px); background-size: 5% 8%; }
+.mapa-marca { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: clamp(18px, 4vw, 42px); font-weight: 800; color: #dfe5e1; text-transform: uppercase; pointer-events: none; text-align: center; }
+.mapa-marca small { font-size: 13px; font-weight: 500; color: #9aa3a0; text-transform: none; margin-top: 6px; }
+.circulo-risco { position: absolute; transform: translate(-50%, -50%); aspect-ratio: 1; border-radius: 50%; border: 2px solid rgba(255,255,255,.85); box-shadow: 0 2px 6px rgba(0,0,0,.3); display: grid; place-items: center; color: #fff; font-weight: 800; font-size: clamp(10px, 1.6vw, 16px); cursor: grab; padding: 0; opacity: .92; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.circulo-risco:active { cursor: grabbing; }
+.legenda-mapa { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; align-items: center; margin-bottom: 8px; }
+.legenda-mapa i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; vertical-align: -2px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.legenda-mapa .sep { width: 1px; height: 14px; background: #ccc; }
+.legenda-mapa i.g { background: #888; }
+.legenda-mapa i.p { width: 8px; height: 8px; } .legenda-mapa i.m { width: 13px; height: 13px; } .legenda-mapa i.gr { width: 18px; height: 18px; }
+.bolinha { display: inline-block; width: 14px; height: 14px; border-radius: 50%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+@media print { .mapa-area { break-inside: avoid; } .mapa-doc .secao-doc { display: none; } }

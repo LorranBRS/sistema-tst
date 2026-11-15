@@ -32,6 +32,10 @@ SaaS web para o dia a dia do **Técnico de Segurança do Trabalho**: EPIs, trein
 | **Extintores** | Recarga (anual), teste hidrostático (5 anos) e inspeção mensal com geração de ações |
 | **Inventário de riscos (PGR)** | Perigos por setor/função (NR-1), matriz 5×5, medidas, geração de ações e impressão do inventário |
 | **CIPA** | Gestão e mandato, membros, calendário de reuniões mensais e atas com assinatura |
+| **Equipamentos** | Cintos, talabartes, escadas, detectores e instrumentos: inspeção periódica, calibração, vida útil, laudo e bloqueio quando reprovado |
+| **Brigada e simulados** | Brigadistas por setor/turno com situação do treinamento; simulados com tempo de abandono x meta, pontos de melhoria e relatório |
+| **Ordens de serviço** | OS por função (NR-1) montada com os riscos do inventário, EPIs e treinamentos da matriz; ciência assinada na tela |
+| **Mapa de riscos** | Planta/croqui do setor com círculos por tipo (cor) e grau (tamanho), gerados do inventário, para imprimir e afixar |
 | **Relatório mensal** | Indicadores, TF/TG do mês e do ano, ocorrências, inspeções, treinamentos, DDS, plano de ação e pendências |
 | **Configurações** | Perfil do técnico, seu logo, cor do sistema, antecedência dos alertas, tema claro/escuro, backup/importação |
 

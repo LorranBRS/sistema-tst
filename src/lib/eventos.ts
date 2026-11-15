@@ -1,6 +1,7 @@
 // Junta todas as datas do sistema (vencimentos, prazos, reuniões...) em uma lista de eventos para a agenda.
 import type { DB } from './types'
 import { daEmpresaAtiva, nomes } from './store'
+import { hoje } from './utils'
 
 export interface Evento {
   data: string
@@ -16,6 +17,7 @@ export const CATEGORIAS: { nome: string; cor: string }[] = [
   { nome: 'ASO', cor: '#7c3aed' },
   { nome: 'EPI', cor: '#d97706' },
   { nome: 'Extintor', cor: '#dc2626' },
+  { nome: 'Equipamento', cor: '#9333ea' },
   { nome: 'Ação', cor: '#0891b2' },
   { nome: 'Inspeção', cor: '#16a34a' },
   { nome: 'CIPA', cor: '#db2777' },
@@ -57,6 +59,14 @@ export function gerarEventos(d: DB): Evento[] {
     ev.push({ data: p.data, categoria: 'DDS / PT', titulo: `${p.numero} ${p.tipo}`, sub: p.atividade, rota: '/app/pt/' + p.id, concluido: p.status !== 'Aberta' })
   for (const x of daEmpresaAtiva(d, d.dds))
     ev.push({ data: x.data, categoria: 'DDS / PT', titulo: `DDS: ${x.tema}`, sub: `${x.participantes} participante(s)`, rota: '/app/dds/' + x.id, concluido: true })
+  for (const q of daEmpresaAtiva(d, d.equipamentos).filter((q) => q.status === 'Em uso')) {
+    const nome = `${q.tipo} ${q.numeroSerie}`
+    if (q.proximaInspecao && q.periodicidadeDias >= 7) ev.push({ data: q.proximaInspecao, categoria: 'Equipamento', titulo: `Inspeção: ${nome}`, sub: q.local, rota: '/app/equipamentos' })
+    if (q.proximaCalibracao) ev.push({ data: q.proximaCalibracao, categoria: 'Equipamento', titulo: `Calibração: ${nome}`, sub: q.local, rota: '/app/equipamentos' })
+    if (q.fimVidaUtil) ev.push({ data: q.fimVidaUtil, categoria: 'Equipamento', titulo: `Fim da vida útil: ${nome}`, sub: q.local, rota: '/app/equipamentos' })
+  }
+  for (const s of daEmpresaAtiva(d, d.simulados))
+    ev.push({ data: s.data, categoria: 'Inspeção', titulo: `Simulado: ${s.tipo}`, sub: s.cenario, rota: '/app/simulados/' + s.id, concluido: s.data <= hoje() })
   const cipas = daEmpresaAtiva(d, d.cipas)
   for (const c of cipas) ev.push({ data: c.fim, categoria: 'CIPA', titulo: `Fim do mandato da CIPA ${c.gestao}`, sub: nomes.empresa(d, c.empresaId), rota: '/app/cipa' })
   const idsCipa = new Set(cipas.map((c) => c.id))
