@@ -81,6 +81,11 @@ export function gerarEventos(d: DB): Evento[] {
     ev.push({ data: r.data, categoria: 'CIPA', titulo: `Reunião ${r.tipo.toLowerCase()} da CIPA`, sub: `${r.hora}${r.local ? ' · ' + r.local : ''}`, rota: '/app/cipa/reuniao/' + r.id, concluido: r.status === 'Realizada' })
   for (const r of daEmpresaAtiva(d, d.riscos))
     if (r.prazo) ev.push({ data: r.prazo, categoria: 'Ação', titulo: `PGR: ${r.medidasPropostas || r.perigo}`, sub: r.setor, rota: '/app/pgr' })
+  for (const a of daEmpresaAtiva(d, d.avaliacoes))
+    if (a.proximaAvaliacao) ev.push({ data: a.proximaAvaliacao, categoria: 'Inspeção', titulo: `Reavaliar ${a.agente.toLowerCase()} – ${a.ghe}`, sub: a.setor, rota: '/app/avaliacoes' })
+  for (const s of daEmpresaAtiva(d, d.sipats))
+    for (const at of s.atividades)
+      ev.push({ data: at.dia, categoria: 'CIPA', titulo: `SIPAT: ${at.tema || 'atividade'}`, sub: `${at.hora}${at.local ? ' · ' + at.local : ''}${at.palestrante ? ' · ' + at.palestrante : ''}`, rota: '/app/sipat/' + s.id, concluido: s.status === 'Realizada' })
 
   return ev.filter((e) => e.data).sort((a, b) => a.data.localeCompare(b.data))
 }

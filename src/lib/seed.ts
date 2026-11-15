@@ -41,6 +41,9 @@ export const dbVazio = (): DB => ({
   contratadas: [],
   terceiros: [],
   quimicos: [],
+  atestados: [],
+  avaliacoes: [],
+  sipats: [],
   config: configPadrao(),
 })
 
@@ -331,8 +334,50 @@ export function dbDemo(): DB {
     q('qm5', 'e1', 'Cimento Portland', 'Fabricante W', '65997-15-1', '—', 'Canteiro – depósito', '80 sacos', ['GHS05', 'GHS07'], -600, 'Luva, óculos, respirador PFF2', 'Sobre estrados, local seco'),
   ]
 
+  const at = (id: string, colaboradorId: string, ini: number, dias: number, motivo: string, cid = '') => ({ id, colaboradorId, data: d(ini), dias, motivo, cid, medico: '', obs: '' })
+  const atestados = [
+    at('at1', 'c3', -200, 2, 'Doença', 'J11'),
+    at('at2', 'c4', -150, 1, 'Consulta / exame'),
+    at('at3', 'c5', -40, 35, 'Acidente de trabalho', 'S82'),
+    at('at4', 'c2', -95, 3, 'Doença', 'A09'),
+    at('at5', 'c7', -120, 5, 'Doença', 'M54'),
+    at('at6', 'c7', -70, 12, 'Doença', 'M54'),
+    at('at7', 'c8', -60, 1, 'Acompanhamento familiar'),
+    at('at8', 'c10', -25, 2, 'Doença', 'J06'),
+    at('at9', 'c9', -10, 1, 'Consulta / exame'),
+    at('at10', 'c6', -260, 4, 'Doença', 'H10'),
+  ]
+  const av = (id: string, empresaId: string, ghe: string, setor: string, funcoes: string, agente: string, descricaoAgente: string, metodologia: string, data: number, resultado: number, unidade: string, limite: number | string, nivelAcao: number | string, obs = '') => ({
+    id, empresaId, ghe, setor, funcoes, agente, descricaoAgente, metodologia, data: d(data), resultado, unidade, limite, nivelAcao, equipamento: agente.startsWith('Ruído') ? 'Dosímetro de ruído' : agente === 'Calor' ? 'Medidor de IBUTG' : 'Bomba de amostragem', responsavel: 'Técnico(a) de Segurança (demo)', proximaAvaliacao: addMeses(d(data), 12), obs,
+  })
+  const avaliacoes = [
+    av('av1', 'e2', 'GHE 01', 'Estamparia', 'Operador de prensa, auxiliar de produção', 'Ruído', '', 'NHO-01 (q=3)', -300, 91.2, 'dB(A)', 85, 82, 'Prensas excêntricas sem enclausuramento'),
+    av('av2', 'e2', 'GHE 02', 'Caldeiraria', 'Soldador', 'Ruído', '', 'NHO-01 (q=3)', -300, 83.5, 'dB(A)', 85, 82),
+    av('av3', 'e2', 'GHE 02', 'Caldeiraria', 'Soldador', 'Químico', 'Fumos metálicos (óxido de ferro)', 'NIOSH 7300', -380, 2.1, 'mg/m³', 5, 2.5),
+    av('av4', 'e2', 'GHE 03', 'Logística', 'Operador de empilhadeira', 'Vibração de corpo inteiro', '', 'NHO-09', -200, 0.62, 'm/s² (aren)', 1.1, 0.5),
+    av('av5', 'e1', 'GHE 01', 'Obras', 'Pedreiro, armador', 'Poeira / sílica', 'Poeira respirável com sílica cristalina', 'NHO-08', -100, 0.018, 'mg/m³', 0.025, 0.0125),
+    av('av6', 'e1', 'GHE 01', 'Obras', 'Pedreiro, armador', 'Calor', '', 'NHO-06', -60, 27.1, '°C IBUTG', 28.5, 26.8, 'Limite e nível de ação para a taxa metabólica da atividade (valores de exemplo)'),
+  ]
+  // SIPAT de exemplo: semana (segunda a sexta) que começa daqui a ~3 semanas
+  let seg = d(21)
+  while (new Date(seg + 'T12:00:00').getDay() !== 1) seg = addDias(seg, 1)
+  const ds = (n: number) => addDias(seg, n)
+  const anoAtual = seg.slice(0, 4)
+  const sipats = [
+    {
+      id: 'sp1', empresaId: 'e2', ano: anoAtual, tema: 'Segurança se faz com atitude', inicio: ds(0), fim: ds(4), responsavel: 'CIPA – gestão atual', status: 'Planejada' as const, orcamento: 'R$ 2.500,00', avaliacao: '',
+      atividades: [
+        { dia: ds(0), hora: '08:00', tema: 'Abertura: prevenção de acidentes com máquinas (NR-12)', palestrante: 'Técnico(a) de Segurança', local: 'Refeitório' },
+        { dia: ds(1), hora: '08:00', tema: 'Saúde mental e qualidade de vida', palestrante: 'Psicóloga convidada', local: 'Refeitório' },
+        { dia: ds(2), hora: '14:00', tema: 'Ergonomia no posto de trabalho', palestrante: 'Fisioterapeuta convidado', local: 'Estamparia' },
+        { dia: ds(3), hora: '08:00', tema: 'Prevenção de incêndio e uso de extintores (prática)', palestrante: 'Brigada de emergência', local: 'Pátio' },
+        { dia: ds(4), hora: '15:00', tema: 'Encerramento, premiação e sorteio', palestrante: 'Comissão da SIPAT', local: 'Refeitório' },
+      ],
+    },
+  ]
+
   return {
-    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs, pts, requisitos, modelos: [], extintores, riscos, cipas, reunioes, equipamentos, brigadistas, simulados, ordens, mapas: [], contratadas, terceiros, quimicos,
+    empresas, colaboradores, epis, entregas, treinamentos, asos, ocorrencias, acoes, dds, inspecoes, aprs, pts, requisitos, modelos: [], extintores, riscos, cipas, reunioes, equipamentos, brigadistas, simulados, ordens, mapas: [], contratadas, terceiros, quimicos, atestados, avaliacoes, sipats,
     config: { ...configPadrao(), tecnico: 'Técnico(a) de Segurança (demo)' },
   }
 }

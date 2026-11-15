@@ -1,12 +1,13 @@
 // Página genérica de cadastro: lista com busca, filtros, exportação CSV e formulário em modal.
 // Cada módulo (colaboradores, treinamentos, ASOs...) só descreve campos e colunas.
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Download, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import type { ColKey, DB } from '../lib/types'
 import { db, daEmpresaAtiva, useDB } from '../lib/store'
 import { baixarArquivo, gerarCSV, hoje, normalizar } from '../lib/utils'
 import { Campo, CampoLogo, Modal, PageHead, Vazio, toast } from './ui'
 import { Fotos } from './Fotos'
+import { EVENTO_BUSCA, buscaPendente } from './Busca'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Reg = { id: string; [k: string]: any }
@@ -66,8 +67,17 @@ function rotuloRef(d: DB, col: 'empresas' | 'colaboradores' | 'epis', r: Reg) {
 
 export function CrudPage({ cfg }: { cfg: CrudConfig }) {
   const d = useDB()
-  const [busca, setBusca] = useState('')
   const [filtro, setFiltro] = useState(0)
+  const [busca, setBusca] = useState(() => {
+    const b = buscaPendente.texto
+    buscaPendente.texto = ''
+    return b
+  })
+  useEffect(() => {
+    const f = (e: Event) => { setBusca((e as CustomEvent<string>).detail); setFiltro(0); buscaPendente.texto = '' }
+    window.addEventListener(EVENTO_BUSCA, f)
+    return () => window.removeEventListener(EVENTO_BUSCA, f)
+  }, [])
   const [editando, setEditando] = useState<Reg | null>(null)
 
   const todos = d[cfg.colecao] as unknown as Reg[]

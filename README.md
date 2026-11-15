@@ -40,6 +40,10 @@ SaaS web para o dia a dia do **Técnico de Segurança do Trabalho**: EPIs, trein
 | **Terceiros** | Contratadas e seus trabalhadores com documentos exigidos e validade; mostra quem está liberado ou bloqueado e imprime a lista para a portaria |
 | **Produtos químicos** | Inventário com FDS, pictogramas GHS, EPIs e armazenamento; alerta de produtos incompatíveis no mesmo local |
 | **Fotos** | Fotos pelo celular nas não conformidades das inspeções e nas ocorrências, guardadas no aparelho (IndexedDB) e incluídas no backup |
+| **Avaliações ambientais** | Medições de ruído, calor, vibração, poeiras e químicos por GHE, comparadas com o limite e o nível de ação (NR-9/NR-15), geração de ações e quadro para imprimir |
+| **Absenteísmo** | Atestados com taxa de absenteísmo por mês, motivo, setor e pessoa; alertas de encaminhamento ao INSS e de ASO de retorno |
+| **SIPAT** | Programação sugerida por dia, palestrantes e locais, lista de presença assinada na tela e relatório final |
+| **Busca global** | Botão Buscar (ou Ctrl+K) que procura em todos os cadastros e abre o registro |
 | **Relatório mensal** | Indicadores, TF/TG do mês e do ano, ocorrências, inspeções, treinamentos, DDS, plano de ação e pendências |
 | **Configurações** | Perfil do técnico, seu logo, cor do sistema, antecedência dos alertas, tema claro/escuro, backup/importação |
 

@@ -457,3 +457,50 @@ export const FUNCOES_CIPA = ['Presidente', 'Vice-presidente', 'Secretário(a)', 
 
 /* ---------- Investigação de acidentes ---------- */
 export const CATEGORIAS_6M = ['Método', 'Mão de obra', 'Máquina', 'Material', 'Meio ambiente', 'Medição']
+
+/* ---------- Avaliações ambientais (NR-9 / NR-15 / NHO) ---------- */
+// limite e nível de ação sugeridos; vazio = depende do caso (o técnico informa).
+export const AGENTES_AMBIENTAIS: { agente: string; unidade: string; limite: number | ''; nivelAcao: number | ''; metodologia: string; ajuda: string }[] = [
+  { agente: 'Ruído', unidade: 'dB(A)', limite: 85, nivelAcao: 82, metodologia: 'NHO-01 (q=3)', ajuda: 'NHO-01: limite 85 dB(A) e nível de ação 82 dB(A) para 8 h (NR-15 Anexo 1 usa q=5: nível de ação 80 dB(A))' },
+  { agente: 'Ruído (dose)', unidade: '%', limite: 100, nivelAcao: 50, metodologia: 'NHO-01 (q=3)', ajuda: 'Dose de 100% = limite; nível de ação = 50% da dose' },
+  { agente: 'Calor', unidade: '°C IBUTG', limite: '', nivelAcao: '', metodologia: 'NHO-06', ajuda: 'Limite e nível de ação dependem da taxa metabólica (NR-15 Anexo 3, quadros 1 e 2)' },
+  { agente: 'Vibração de mãos e braços', unidade: 'm/s² (aren)', limite: 5, nivelAcao: 2.5, metodologia: 'NHO-10', ajuda: 'NR-15 Anexo 8: limite 5,0 m/s² e nível de ação 2,5 m/s²' },
+  { agente: 'Vibração de corpo inteiro', unidade: 'm/s² (aren)', limite: 1.1, nivelAcao: 0.5, metodologia: 'NHO-09', ajuda: 'NR-15 Anexo 8: limite 1,1 m/s² e nível de ação 0,5 m/s² (aren)' },
+  { agente: 'Poeira / sílica', unidade: 'mg/m³', limite: '', nivelAcao: '', metodologia: 'NHO-08', ajuda: 'Limite conforme o teor de sílica (NR-15 Anexo 12) ou ACGIH; nível de ação = metade do limite' },
+  { agente: 'Químico', unidade: 'ppm', limite: '', nivelAcao: '', metodologia: '', ajuda: 'Limite da NR-15 Anexo 11 (ou ACGIH); nível de ação = metade do limite (NR-9)' },
+  { agente: 'Radiação não ionizante', unidade: '', limite: '', nivelAcao: '', metodologia: '', ajuda: 'Avaliação qualitativa ou conforme ACGIH' },
+  { agente: 'Biológico', unidade: '', limite: '', nivelAcao: '', metodologia: 'Qualitativa', ajuda: 'Avaliação qualitativa (NR-15 Anexo 14)' },
+  { agente: 'Outro', unidade: '', limite: '', nivelAcao: '', metodologia: '', ajuda: '' },
+]
+
+/** Resultado x limite: 'acima' do limite, 'acao' (acima do nível de ação), 'ok' ou null (sem limite). */
+export function classificarAvaliacao(resultado: unknown, limite: unknown, nivelAcao: unknown): 'acima' | 'acao' | 'ok' | null {
+  const r = Number(String(resultado).replace(',', '.'))
+  const l = Number(String(limite).replace(',', '.'))
+  const n = Number(String(nivelAcao).replace(',', '.'))
+  if (resultado === '' || resultado == null || !isFinite(r)) return null
+  if (limite !== '' && limite != null && isFinite(l) && l > 0 && r >= l) return 'acima'
+  const na = nivelAcao !== '' && nivelAcao != null && isFinite(n) && n > 0 ? n : isFinite(l) && l > 0 ? l / 2 : NaN
+  if (isFinite(na) && r >= na) return 'acao'
+  if ((isFinite(l) && l > 0) || isFinite(na)) return 'ok'
+  return null
+}
+
+/* ---------- Absenteísmo ---------- */
+export const MOTIVOS_ATESTADO = ['Doença', 'Acidente de trabalho', 'Acidente fora do trabalho', 'Consulta / exame', 'Acompanhamento familiar', 'Licença maternidade / paternidade', 'Outros']
+
+/* ---------- SIPAT ---------- */
+export const TEMAS_SIPAT = [
+  'Abertura: prevenção de acidentes no trabalho',
+  'Saúde mental e qualidade de vida',
+  'Ergonomia e prevenção de LER/DORT',
+  'Prevenção de incêndio e uso de extintores (prática)',
+  'Primeiros socorros e RCP',
+  'Prevenção de IST, HIV e hepatites',
+  'Uso correto de EPIs',
+  'Alimentação saudável e hipertensão',
+  'Álcool, drogas e trabalho',
+  'Segurança no trânsito',
+  'Assédio moral e sexual (NR-5)',
+  'Encerramento, premiação e sorteio',
+]

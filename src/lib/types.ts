@@ -326,6 +326,61 @@ export interface Quimico {
   primeirosSocorros: string
 }
 
+export interface Atestado {
+  id: ID
+  colaboradorId: ID
+  data: string // início do afastamento
+  dias: number
+  motivo: string
+  cid: string
+  medico: string
+  obs: string
+}
+
+export interface Avaliacao {
+  id: ID
+  empresaId: ID
+  ghe: string
+  setor: string
+  funcoes: string
+  agente: string
+  descricaoAgente: string
+  metodologia: string
+  data: string
+  resultado: number | string
+  unidade: string
+  limite: number | string
+  nivelAcao: number | string
+  equipamento: string
+  responsavel: string
+  proximaAvaliacao: string
+  obs: string
+  acaoGerada?: boolean
+}
+
+export interface AtividadeSipat {
+  dia: string
+  hora: string
+  tema: string
+  palestrante: string
+  local: string
+}
+
+export interface Sipat {
+  id: ID
+  empresaId: ID
+  ano: string
+  tema: string
+  inicio: string
+  fim: string
+  responsavel: string
+  status: 'Planejada' | 'Realizada'
+  atividades: AtividadeSipat[]
+  presencas?: Assinatura[]
+  orcamento: string
+  avaliacao: string
+}
+
 export interface Requisito {
   id: ID
   funcao: string
@@ -445,6 +500,9 @@ export interface DB {
   contratadas: Contratada[]
   terceiros: Terceiro[]
   quimicos: Quimico[]
+  atestados: Atestado[]
+  avaliacoes: Avaliacao[]
+  sipats: Sipat[]
   config: Config
 }
 

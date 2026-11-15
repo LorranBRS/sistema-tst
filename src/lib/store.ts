@@ -15,6 +15,11 @@ function carregar(): DB {
       const dados = JSON.parse(bruto)
       const base = dbVazio()
       // Migração da v1.0: quem ainda usa os dados de demonstração ganha os exemplos dos módulos novos
+      // v1.7: absenteísmo, avaliações ambientais e SIPAT de exemplo para quem usa a demonstração
+      if (dados.atestados === undefined && Array.isArray(dados.empresas) && dados.empresas.some((e: { id: string }) => e.id === 'e1')) {
+        const demo = dbDemo()
+        Object.assign(dados, { atestados: demo.atestados, avaliacoes: demo.avaliacoes, sipats: demo.sipats })
+      }
       // v1.6: terceiros e produtos químicos de exemplo para quem usa a demonstração
       if (dados.contratadas === undefined && Array.isArray(dados.empresas) && dados.empresas.some((e: { id: string }) => e.id === 'e1')) {
         const demo = dbDemo()
